@@ -14,7 +14,12 @@ import {
   CheckCircle2,
   Calendar,
   Layers,
-  FileText
+  FileText,
+  Mail,
+  ShieldCheck,
+  PlusCircle,
+  Trash2,
+  Copy
 } from 'lucide-react';
 import { Candidate, PostCategoryConfig, PostType } from '../types/election';
 import { AMU_FACULTIES } from '../constants/faculties';
@@ -74,6 +79,8 @@ export const AllCandidatesPage: React.FC<AllCandidatesPageProps> = ({
 
   const totalCandidateCount = candidateList.length;
 
+
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
   return (
     <div className="py-6 space-y-8 animate-in fade-in duration-200">
@@ -346,6 +353,87 @@ export const AllCandidatesPage: React.FC<AllCandidatesPageProps> = ({
           })()}
         </div>
       )}
+
+      {/* Candidate Profile Desk & Verification Notice Box */}
+      <div className="mt-12 relative rounded-3xl bg-gradient-to-br from-emerald-50/90 via-teal-50/50 to-white border-2 border-emerald-200/90 p-6 sm:p-8 shadow-sm overflow-hidden">
+        {/* Decorative Skyline Watermark */}
+        <div className="absolute -right-6 -bottom-4 opacity-15 pointer-events-none">
+          <AmuSkyline className="w-80 h-24 text-emerald-800" fill="#047857" />
+        </div>
+
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100/90 text-emerald-900 border border-emerald-300/80 text-[11px] font-black uppercase tracking-wider">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Official Candidate Profile Desk</span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Are you a Contesting Candidate in AMUSU Elections?
+            </h3>
+
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+              To request a <strong className="text-slate-900 font-bold">Verified Blue Badge</strong> on your candidate profile, add/update your photo and manifesto details, or request a profile removal/addition, please email our election desk directly.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs font-semibold text-slate-700">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/90 rounded-xl border border-emerald-200 shadow-2xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Verified Badge Claim</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/90 rounded-xl border border-emerald-200 shadow-2xs">
+                <PlusCircle className="w-3.5 h-3.5 text-blue-600" />
+                <span>Add / Update Candidate Profile</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/90 rounded-xl border border-emerald-200 shadow-2xs">
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>Request Profile Removal</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Action Box */}
+          <div className="w-full md:w-auto shrink-0 bg-white p-5 rounded-2xl border border-emerald-200/90 shadow-2xs flex flex-col items-center text-center space-y-3">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100 shadow-2xs">
+              <Mail className="w-5 h-5 stroke-[2.2]" />
+            </div>
+
+            <div>
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                Official Support Email
+              </span>
+              <a 
+                href="mailto:reach.lastminute@gmail.com"
+                className="font-extrabold text-xs sm:text-sm text-emerald-800 hover:underline block mt-0.5"
+              >
+                reach.lastminute@gmail.com
+              </a>
+            </div>
+
+            <div className="flex items-center gap-2 w-full pt-1">
+              <a
+                href="mailto:reach.lastminute@gmail.com?subject=AMUSU%20Candidate%20Profile%20Verification%20%2F%20Update%20Request"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-2xs transition-all active:scale-95 cursor-pointer"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Email Us</span>
+              </a>
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText('reach.lastminute@gmail.com');
+                  setCopiedEmail(true);
+                  setTimeout(() => setCopiedEmail(false), 2000);
+                }}
+                className="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors shrink-0 cursor-pointer"
+                title="Copy Email Address"
+              >
+                {copiedEmail ? 'Copied!' : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

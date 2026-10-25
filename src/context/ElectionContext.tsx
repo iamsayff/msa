@@ -67,6 +67,9 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const candidatesCol = collection(db, 'candidates');
 
+    const REMOVED_IDS = new Set(['pres-1', 'vp-1', 'sec-1', 'court-1']);
+    const REMOVED_NAMES = new Set(['aamir saif', 'ansaar saif', 'mohd tariq', 'zaid khan']);
+
     const unsubscribe = onSnapshot(candidatesCol, (snapshot) => {
       if (snapshot.empty) {
         try {
@@ -82,18 +85,41 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setCandidates(MOCK_CANDIDATES);
       } else {
         const liveCandidates: Candidate[] = [];
+        const idsToDelete: string[] = [];
+
         snapshot.forEach((docSnap) => {
           const cdata = docSnap.data() as Candidate;
-          liveCandidates.push({ 
-            ...cdata, 
-            id: docSnap.id,
-            serialNumber: cdata.serialNumber !== undefined && cdata.serialNumber !== 0 ? cdata.serialNumber : undefined,
-          });
+          const nameLower = (cdata.name || '').toLowerCase().trim();
+
+          if (REMOVED_IDS.has(docSnap.id) || REMOVED_NAMES.has(nameLower)) {
+            idsToDelete.push(docSnap.id);
+          } else {
+            liveCandidates.push({ 
+              ...cdata, 
+              id: docSnap.id,
+              serialNumber: cdata.serialNumber !== undefined && cdata.serialNumber !== 0 ? cdata.serialNumber : undefined,
+            });
+          }
         });
+
+        // Delete removed candidates from Firestore
+        if (idsToDelete.length > 0) {
+          try {
+            const batch = writeBatch(db);
+            idsToDelete.forEach((id) => {
+              batch.delete(doc(db, 'candidates', id));
+            });
+            batch.commit().catch((e) => console.warn('Candidate purge notice:', e));
+          } catch (e) {
+            console.warn('Candidate purge batch error:', e);
+          }
+        }
 
         // Ensure newly added MOCK_CANDIDATES (e.g. Cabinet Members) are synced into Firestore
         const existingIds = new Set(liveCandidates.map((c) => c.id));
-        const missingCandidates = MOCK_CANDIDATES.filter((mc) => !existingIds.has(mc.id));
+        const missingCandidates = MOCK_CANDIDATES.filter(
+          (mc) => !existingIds.has(mc.id) && !REMOVED_IDS.has(mc.id) && !REMOVED_NAMES.has((mc.name || '').toLowerCase().trim())
+        );
 
         if (missingCandidates.length > 0) {
           try {
@@ -113,7 +139,7 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLoading(false);
     }, (error) => {
       console.warn('Realtime candidates sync notice:', error);
-      setCandidates(MOCK_CANDIDATES);
+      setCandidates(MOCK_CANDIDATES.filter((mc) => !REMOVED_IDS.has(mc.id) && !REMOVED_NAMES.has((mc.name || '').toLowerCase().trim())));
       setLoading(false);
     });
 
