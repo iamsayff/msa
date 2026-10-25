@@ -35,8 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-3 sm:gap-4">
+      <header className="sticky top-0 z-30 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 flex items-center justify-between gap-3 sm:gap-4">
           {/* Left: Stylish Site Logo & Mobile hamburger */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             <button
@@ -48,11 +48,11 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* Logo Badge for AMUSU Elections.in */}
-            <div className="flex items-center cursor-pointer hover:opacity-95 transition-opacity">
+            <div className="flex items-center cursor-pointer hover:opacity-95 transition-opacity py-1">
               <img
-                src="/assets/aistudio/AMUSU_Elections_Logo_Badge__1__6faee246.png"
+                src="https://i.ibb.co/rrNwtYY/Green-Mosque-Emblem-and-Election-Wordmark.png"
                 alt="AMUSU Elections.in - Know Your Candidate"
-                className="h-10 sm:h-11 w-auto max-w-[220px] object-contain"
+                className="h-13 sm:h-16 md:h-18 w-auto max-w-[280px] sm:max-w-[340px] object-contain drop-shadow-xs transition-transform hover:scale-102"
               />
             </div>
           </div>

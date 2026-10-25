@@ -5,6 +5,7 @@ interface FullWidthBannerProps {
   alt: string;
   className?: string;
   edgeToEdge?: boolean;
+  fitMode?: 'contain' | 'cover' | 'auto';
 }
 
 export const FullWidthBanner: React.FC<FullWidthBannerProps> = ({
@@ -12,20 +13,26 @@ export const FullWidthBanner: React.FC<FullWidthBannerProps> = ({
   alt,
   className = '',
   edgeToEdge = true,
+  fitMode = 'contain',
 }) => {
   return (
     <div 
-      className={`w-full overflow-hidden select-none pointer-events-none ${
+      className={`w-full overflow-hidden select-none pointer-events-none flex items-center justify-center ${
         edgeToEdge 
           ? '-mx-4 sm:-mx-6 lg:-mx-8 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] rounded-none sm:rounded-2xl lg:rounded-3xl shadow-xs' 
           : 'rounded-2xl sm:rounded-3xl shadow-xs'
-      } border-y sm:border border-slate-200/80 bg-slate-100 ${className}`}
+      } border-y sm:border border-slate-200/80 bg-slate-900/5 ${className}`}
     >
       <img
         src={src}
         alt={alt}
-        className="w-full h-44 sm:h-56 md:h-72 lg:h-80 xl:h-96 object-cover block select-none pointer-events-none"
+        className={`w-full h-auto max-h-[550px] ${
+          fitMode === 'cover'
+            ? 'object-cover h-48 sm:h-64 md:h-80 lg:h-96'
+            : 'object-contain'
+        } block select-none pointer-events-none transition-all duration-300`}
         loading="lazy"
+        referrerPolicy="no-referrer"
       />
     </div>
   );

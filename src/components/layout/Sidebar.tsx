@@ -66,12 +66,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         <div>
           {/* Brand Header */}
-          <div className="flex items-center justify-between px-5 py-5 border-b border-slate-100">
+          <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100">
             <div className="flex items-center cursor-pointer hover:opacity-95 transition-opacity">
               <img
-                src="/assets/aistudio/AMUSU_Elections_Logo_Badge__1__6faee246.png"
+                src="https://i.ibb.co/rrNwtYY/Green-Mosque-Emblem-and-Election-Wordmark.png"
                 alt="AMUSU Elections.in - Know Your Candidate"
-                className="h-10 w-auto max-w-[175px] object-contain"
+                className="h-13 sm:h-16 w-auto max-w-[220px] object-contain drop-shadow-xs transition-transform hover:scale-102"
               />
             </div>
 

@@ -21,6 +21,7 @@ import {
   Database
 } from 'lucide-react';
 import { Candidate, PostType, ProfileClaimRequest } from '../types/election';
+import { AMU_FACULTIES } from '../constants/faculties';
 import { useElection } from '../context/ElectionContext';
 import { useAuth } from '../context/AuthContext';
 import { POST_CATEGORIES } from '../data/mockElectionData';
@@ -57,6 +58,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   const [activeTab, setActiveTab] = useState<'candidates' | 'claims' | 'issues'>('candidates');
   const [filterPost, setFilterPost] = useState<PostType | 'all'>('all');
+  const [filterFaculty, setFilterFaculty] = useState<string>('all');
   const [candidateSearch, setCandidateSearch] = useState('');
   const [editingCandidateId, setEditingCandidateId] = useState<string | null>(null);
 
@@ -70,7 +72,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newCandName, setNewCandName] = useState('');
   const [newCandPost, setNewCandPost] = useState<PostType>('president');
-  const [newCandFaculty, setNewCandFaculty] = useState('');
+  const [newCandFaculty, setNewCandFaculty] = useState<string>(AMU_FACULTIES[0]);
 
   // If not authorized, render restricted screen without displaying the secret emails
   if (!isAuthorized) {
@@ -134,11 +136,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     const post = c.post || '';
     const faculty = c.faculty || '';
     const matchesPost = filterPost === 'all' || post === filterPost;
+    const matchesFaculty = filterFaculty === 'all' || faculty === filterFaculty;
     const matchesSearch = !candidateSearch || 
       name.toLowerCase().includes(candidateSearch.toLowerCase()) ||
       c.claimedEmail?.toLowerCase().includes(candidateSearch.toLowerCase()) ||
       faculty.toLowerCase().includes(candidateSearch.toLowerCase());
-    return matchesPost && matchesSearch;
+    return matchesPost && matchesFaculty && matchesSearch;
   });
 
   const handleCreateCandidate = async (e: React.FormEvent) => {
@@ -147,10 +150,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     const newId = await addCandidate({
       name: newCandName,
       post: newCandPost,
-      faculty: newCandFaculty || 'Faculty of Arts',
+      faculty: newCandFaculty || AMU_FACULTIES[0],
     });
     setNewCandName('');
-    setNewCandFaculty('');
+    setNewCandFaculty(AMU_FACULTIES[0]);
     setIsAddModalOpen(false);
     setSavedNotice(`Successfully added candidate to Firestore database!`);
     setTimeout(() => setSavedNotice(null), 4000);
@@ -342,16 +345,32 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             </div>
 
             {/* Filter and Search Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
-              <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  value={candidateSearch}
-                  onChange={(e) => setCandidateSearch(e.target.value)}
-                  placeholder="Search candidate name, email, or faculty..."
-                  className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 max-w-xl">
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <input
+                    type="text"
+                    value={candidateSearch}
+                    onChange={(e) => setCandidateSearch(e.target.value)}
+                    placeholder="Search candidate name, email, or faculty..."
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                  />
+                </div>
+
+                {/* Faculty Dropdown Filter */}
+                <select
+                  value={filterFaculty}
+                  onChange={(e) => setFilterFaculty(e.target.value)}
+                  className="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500/20"
+                >
+                  <option value="all">All Faculties</option>
+                  {AMU_FACULTIES.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex items-center gap-1.5 overflow-x-auto">
@@ -782,13 +801,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Faculty / Department</label>
-                <input
-                  type="text"
+                <select
                   value={newCandFaculty}
                   onChange={(e) => setNewCandFaculty(e.target.value)}
-                  placeholder="e.g. Faculty of Engineering & Technology"
-                  className="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                />
+                  className="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white"
+                >
+                  {AMU_FACULTIES.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-3">

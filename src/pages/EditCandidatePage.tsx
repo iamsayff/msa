@@ -34,6 +34,7 @@ import {
   CandidateVisionItem 
 } from '../types/election';
 import { getCandidateSlug } from '../utils/candidateSlug';
+import { AMU_FACULTIES } from '../constants/faculties';
 import { useElection } from '../context/ElectionContext';
 import { useAuth } from '../context/AuthContext';
 import { POST_CATEGORIES } from '../data/mockElectionData';
@@ -678,13 +679,18 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Faculty
                 </label>
-                <input
-                  type="text"
+                <select
                   value={faculty}
                   onChange={(e) => setFaculty(e.target.value)}
-                  placeholder="e.g. Faculty of Engineering & Technology"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs"
-                />
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white"
+                >
+                  <option value="">Select Faculty...</option>
+                  {AMU_FACULTIES.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="sm:col-span-4">

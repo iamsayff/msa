@@ -34,6 +34,7 @@ import { SupportPage } from './pages/SupportPage';
 // Common Components & Floating Sticky Button
 import { StickyVoteButton } from './components/common/StickyVoteButton';
 import { FullWidthBanner } from './components/common/FullWidthBanner';
+import { BANNERS } from './config/banners';
 
 // Modals
 import { CandidateDetailModal } from './components/modals/CandidateDetailModal';
@@ -264,8 +265,8 @@ export default function App() {
             <div className="space-y-4">
               {/* Banner 1: Just above the Hero Section - Full device width, no overlay, no text */}
               <FullWidthBanner
-                src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=2400&q=80"
-                alt="University Heritage Academic Quadrangle"
+                src={BANNERS.topHeroBanner.src}
+                alt={BANNERS.topHeroBanner.alt}
               />
 
               {/* 1. Hero Section */}
@@ -286,8 +287,8 @@ export default function App() {
 
               {/* Banner 2: Just above Meet the Candidates Section - Full device width, no overlay, no text */}
               <FullWidthBanner
-                src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=2400&q=80"
-                alt="University Historic Architecture and Lawn"
+                src={BANNERS.aboveCandidatesBanner.src}
+                alt={BANNERS.aboveCandidatesBanner.alt}
               />
 
               {/* 3. Meet the Candidates (Home Section with 5 Rows) */}
@@ -299,8 +300,8 @@ export default function App() {
 
               {/* Banner 3: Just above Date and Timelines Section - Full device width, no overlay, no text */}
               <FullWidthBanner
-                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2400&q=80"
-                alt="University Library Tower Landmark"
+                src={BANNERS.aboveTimelineBanner.src}
+                alt={BANNERS.aboveTimelineBanner.alt}
               />
 
               {/* 4. Key Election Dates & Timeline */}
@@ -425,8 +426,8 @@ export default function App() {
         {/* Banner 4: Just before the Footer - Display fully according to device width, no overlay, no text */}
         <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 my-4">
           <FullWidthBanner
-            src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=2400&q=80"
-            alt="University Campus Panoramic Landscape"
+            src={BANNERS.bottomFooterBanner.src}
+            alt={BANNERS.bottomFooterBanner.alt}
             edgeToEdge={false}
           />
         </div>

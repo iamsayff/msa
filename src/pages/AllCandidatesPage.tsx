@@ -17,6 +17,7 @@ import {
   FileText
 } from 'lucide-react';
 import { Candidate, PostCategoryConfig, PostType } from '../types/election';
+import { AMU_FACULTIES } from '../constants/faculties';
 import { POST_CATEGORIES, MOCK_CANDIDATES } from '../data/mockElectionData';
 import { CandidateCard } from '../components/candidates/CandidateCard';
 import { AmuSkyline } from '../components/common/AmuSkyline';
@@ -47,10 +48,7 @@ export const AllCandidatesPage: React.FC<AllCandidatesPageProps> = ({
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Unique faculties from candidates
-  const faculties = useMemo(() => {
-    const list = Array.from(new Set(candidateList.map((c) => c.faculty)));
-    return list.sort();
-  }, [candidateList]);
+  const faculties = AMU_FACULTIES;
 
   // Filter and sort candidates
   const filteredCandidates = useMemo(() => {

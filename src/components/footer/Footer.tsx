@@ -134,9 +134,9 @@ export const Footer: React.FC<FooterProps> = ({
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center">
               <img
-                src="/assets/aistudio/AMUSU_Elections_Logo_Badge__1__6faee246.png"
+                src="https://i.ibb.co/rrNwtYY/Green-Mosque-Emblem-and-Election-Wordmark.png"
                 alt="AMUSU Elections.in - Know Your Candidate"
-                className="h-12 w-auto max-w-[220px] object-contain"
+                className="h-18 sm:h-24 w-auto max-w-[340px] sm:max-w-[400px] object-contain drop-shadow-xs transition-transform hover:scale-102"
               />
             </div>
 
