@@ -81,7 +81,25 @@ export function parseRoute(pathname: string): RouteType {
 }
 
 export function useRouter() {
-  const [currentPath, setCurrentPath] = useState<string>(() => window.location.pathname);
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    // Check if loaded via 404.html redirect query parameter (e.g. /?p=/candidate/pres-1)
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get('p');
+    if (p) {
+      // Clean up URL back to clean path without query params
+      window.history.replaceState({}, '', p);
+      return p;
+    }
+    // Also support legacy ?/path format
+    const search = window.location.search;
+    if (search && search.startsWith('?/')) {
+      const decodedPath = decodeURIComponent(search.slice(2).split('&')[0]);
+      window.history.replaceState({}, '', decodedPath);
+      return decodedPath;
+    }
+    return window.location.pathname;
+  });
+
   const route = parseRoute(currentPath);
 
   useEffect(() => {

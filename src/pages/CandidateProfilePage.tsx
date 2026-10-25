@@ -539,7 +539,7 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                 </div>
 
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                  {candidate.aboutMe || (candidate.bio ? candidate.bio : `I am ${candidate.name}, a dedicated final year student from the ${candidate.faculty}. I believe in the power of unity, open dialogue and collective action. My aim is to build a more inclusive, transparent and opportunity-rich AMU — where every student's voice matters and every idea gets a chance to grow.`)}
+                  {candidate.aboutMe || ''}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 pt-2">
