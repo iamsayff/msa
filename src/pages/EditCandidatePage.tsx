@@ -679,7 +679,7 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
                 <input
                   type="text"
                   readOnly
-                  value={candidate.post.replace('_', ' ').toUpperCase()}
+                  value={(candidate?.post || '').replace('_', ' ').toUpperCase()}
                   className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-600 text-xs font-bold cursor-not-allowed"
                 />
               </div>
@@ -1416,7 +1416,7 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
           <div>
             <span className="font-extrabold text-sm block">{name}</span>
             <span className="text-xs text-slate-400">
-              Ballot #{serialNumber} • {candidate.post.replace('_', ' ').toUpperCase()}
+              Ballot #{serialNumber} • {(candidate?.post || '').replace('_', ' ').toUpperCase()}
             </span>
           </div>
         </div>
