@@ -100,58 +100,6 @@ export const POST_CATEGORIES: PostCategoryConfig[] = [
 
 const RAW_CANDIDATES: Candidate[] = [
   // Executive Officers (Allotted Ballot Numbers)
-  {
-    id: 'pres-1',
-    name: 'Aamir Saif',
-    post: 'president',
-    serialNumber: 1,
-    quote: 'Restoring democratic student charter, 24/7 library, & transparent governance.',
-    faculty: 'Faculty of Engineering & Technology',
-    year: 'Final Year B.Tech',
-    votesCount: 1420,
-    isVerified: true,
-    isClaimed: true,
-    claimedEmail: 'talktoaamirsaif@gmail.com',
-    manifestoHighlights: ['24/7 Library & Reading Rooms', 'Fast-Track Student Grievance Cell', 'Hostel Sanitation & RO Water'],
-  },
-  {
-    id: 'vp-1',
-    name: 'Ansaar Saif',
-    post: 'vice_president',
-    serialNumber: 1,
-    quote: 'Empowering student voices, skill labs, & equal inter-hall amenities.',
-    faculty: 'Faculty of Social Sciences',
-    year: 'M.A. Political Science',
-    votesCount: 1180,
-    isVerified: true,
-    isClaimed: true,
-    claimedEmail: 'ansaarsaif7@gmail.com',
-    manifestoHighlights: ['Inter-Faculty Placement Drives', 'Sports Budget Double', 'Subsidized E-Rickshaw Transport'],
-  },
-  {
-    id: 'sec-1',
-    name: 'Mohd Tariq',
-    post: 'honorary_secretary',
-    serialNumber: 1,
-    quote: 'Accountability, mess food audits, & vibrant campus debate culture.',
-    faculty: 'Faculty of Law',
-    year: 'LL.M. Final Year',
-    votesCount: 960,
-    isVerified: true,
-    manifestoHighlights: ['Democratic Mess Audit Committees', 'Sir Syed Day Debate Revival', 'Student Legal Advisory Desk'],
-  },
-  {
-    id: 'court-1',
-    name: 'Zaid Khan',
-    post: 'court_member',
-    serialNumber: 1,
-    quote: 'Protecting statutory university autonomy and scholar research grants.',
-    faculty: 'Faculty of Science',
-    year: 'Ph.D. Scholar',
-    votesCount: 750,
-    isVerified: true,
-    manifestoHighlights: ['Scholar Fellowship Fast-Track', 'Research Lab Modernization', 'University Court Student Representation'],
-  },
 
   // 35 Cabinet Member Candidates (Unallotted - No Ballot Serial Numbers)
   {
