@@ -108,9 +108,9 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // Initialize with candidate data
+  // Initialize with candidate data only once when candidate ID changes
   useEffect(() => {
-    if (candidate) {
+    if (candidate && candidate.id) {
       setName(candidate.name || '');
       setSerialNumber(candidate.serialNumber !== undefined ? candidate.serialNumber : 0);
       setQuote(candidate.quote || '');
@@ -174,7 +174,7 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
       setInstagram(candidate.instagram || `@${candidate.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_amu2025`);
       setTwitter(candidate.twitter || `@${candidate.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_amu`);
     }
-  }, [candidate]);
+  }, [candidate?.id]);
 
   if (!candidate) {
     return (
