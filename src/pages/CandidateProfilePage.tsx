@@ -40,6 +40,7 @@ import { POST_CATEGORIES } from '../data/mockElectionData';
 import { useElection } from '../context/ElectionContext';
 import { useAuth } from '../context/AuthContext';
 import { ClaimProfileModal } from '../components/modals/ClaimProfileModal';
+import { VerifiedBadge } from '../components/common/VerifiedBadge';
 
 // Helper to resolve YouTube, Vimeo, or direct embed URLs
 function getEmbedVideoUrl(rawUrl: string): string | null {
@@ -232,7 +233,8 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                   </div>
                 )}
               </div>
-              <span className="-mt-3 z-10 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#059669] text-white text-[11px] font-bold shadow-xs">
+              <span className="-mt-3 z-10 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-900 text-white text-[11px] font-bold shadow-xs">
+                <VerifiedBadge size={14} title="Verified Candidate" />
                 <span>Verified Candidate</span>
               </span>
             </div>
@@ -247,8 +249,9 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
               </div>
 
               {/* Candidate Name */}
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                {candidate.name}
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                <span>{candidate.name}</span>
+                <VerifiedBadge size={22} title="Verified AMU Candidate Profile" />
               </h1>
 
               {/* Slogan Quote */}

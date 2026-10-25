@@ -11,6 +11,7 @@ import {
 import { Candidate } from '../../types/election';
 import { POST_CATEGORIES } from '../../data/mockElectionData';
 import { CandidateAvatar } from '../candidates/CandidateAvatar';
+import { VerifiedBadge } from '../common/VerifiedBadge';
 
 interface CandidateDetailModalProps {
   candidate: Candidate | null;
@@ -29,6 +30,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
 
   const category = POST_CATEGORIES.find((c) => c.id === candidate.post);
   const accentColor = category?.themeColor.accentColor || '#059669';
+  const isVerifiedCandidate = Boolean(candidate.claimedEmail || candidate.isClaimed || candidate.isVerified);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
@@ -45,7 +47,10 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             <span className="text-[10px] font-bold tracking-wider uppercase bg-white/20 px-2.5 py-0.5 rounded-full">
               {category?.label} Candidate
             </span>
-            <h2 className="text-xl sm:text-2xl font-extrabold mt-1">{candidate.name}</h2>
+            <h2 className="text-xl sm:text-2xl font-extrabold mt-1 flex items-center gap-1.5">
+              <span>{candidate.name}</span>
+              {isVerifiedCandidate && <VerifiedBadge size={20} title="Verified Candidate" />}
+            </h2>
           </div>
 
           <button

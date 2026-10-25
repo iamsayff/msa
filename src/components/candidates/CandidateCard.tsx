@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Heart, GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Heart, GraduationCap, Building2, ArrowRight } from 'lucide-react';
 import { Candidate, PostCategoryConfig } from '../../types/election';
 import { useElection } from '../../context/ElectionContext';
+import { VerifiedBadge } from '../common/VerifiedBadge';
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -11,9 +12,9 @@ interface CandidateCardProps {
   isVoted?: boolean;
 }
 
-// Color palette mapping for "different colors" requirement
+// Color palette mapping for candidate cards
 const VIBRANT_COLOR_PALETTE: Record<string, string> = {
-  president: '#dc2626',           // Crimson Red (as shown in reference image)
+  president: '#dc2626',           // Crimson Red
   vice_president: '#059669',      // Emerald Green
   honorary_secretary: '#2563eb',  // Royal Blue
   cabinet_member: '#7c3aed',      // Deep Purple
@@ -36,7 +37,6 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
   const postKey = candidate.post || 'president';
   let cardAccentColor = VIBRANT_COLOR_PALETTE[postKey] || categoryConfig?.themeColor?.accentColor || '#dc2626';
 
-  // If candidate has a specific serial number or ID offset, allow color variation
   if (!VIBRANT_COLOR_PALETTE[postKey] && candidate.id) {
     const charCode = candidate.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
     cardAccentColor = EXTRA_COLORS[charCode % EXTRA_COLORS.length];
@@ -54,6 +54,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
     .substring(0, 2)
     .toUpperCase();
 
+  // Auto-detect claimed or verified profile state
   const isVerifiedCandidate = Boolean(candidate.claimedEmail || candidate.isClaimed || candidate.isVerified);
 
   return (
@@ -86,7 +87,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
       {/* 3. CENTER CONTENT AREA */}
       <div className="w-full flex flex-col items-center mt-3">
         
-        {/* Large Circular Avatar with Thick Accent Border */}
+        {/* Large Circular Avatar with Accent Border */}
         <div className="mt-4 mb-2 flex justify-center">
           <div
             className="w-28 h-28 sm:w-32 sm:h-32 rounded-full p-1 bg-white shadow-md flex items-center justify-center relative overflow-hidden transition-transform duration-300 group-hover:scale-102 shrink-0"
@@ -121,29 +122,38 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
           </div>
         </div>
 
-        {/* Candidate Name with Blue Verified Badge Icon if candidate profile is claimed */}
+        {/* Candidate Name with Stylish Blue Rosette Verified Badge Icon */}
         <div className="flex items-center justify-center gap-1.5 mt-1 px-1 flex-wrap">
           <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug">
             {candidate.name}
           </h3>
           {isVerifiedCandidate && (
-            <span title="Verified Candidate Profile" className="inline-flex items-center shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-sky-500 fill-sky-500/20 shrink-0" />
-            </span>
+            <VerifiedBadge size={19} title="Verified Candidate Profile" />
           )}
         </div>
 
-        {/* Bio / Tagline in Double Quotes */}
+        {/* Bio / Slogan in Double Quotes */}
         <p className="text-xs sm:text-sm text-slate-600 font-medium italic mt-1 line-clamp-2 px-1 max-w-xs">
           &ldquo;{candidate.quote || candidate.bio || 'Working for Student Rights & Reform'}&rdquo;
         </p>
 
-        {/* Department / Faculty Name • Course with Graduation Cap Icon */}
-        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800 mt-2 tracking-tight">
-          <GraduationCap className="w-4 h-4 text-slate-600 shrink-0" />
-          <span>
-            {candidate.faculty || 'Department / Faculty'} • {candidate.program || candidate.year || 'Course'}
-          </span>
+        {/* FACULTY AND COURSE IN TWO DISTINCT LINES WITH ASSOCIATED ICONS */}
+        <div className="w-full space-y-1 mt-3 pt-2 border-t border-slate-100">
+          {/* Line 1: Faculty / Department with Building Icon */}
+          <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800 tracking-tight px-1">
+            <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span className="truncate max-w-[220px]">
+              {candidate.faculty || 'Faculty of Engineering & Technology'}
+            </span>
+          </div>
+
+          {/* Line 2: Course / Program with Graduation Cap Icon */}
+          <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-600 tracking-tight px-1">
+            <GraduationCap className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="truncate max-w-[220px]">
+              {candidate.program || candidate.year || 'Degree / Program'}
+            </span>
+          </div>
         </div>
 
         {isVoted && (
@@ -153,7 +163,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
         )}
       </div>
 
-      {/* 4. BOTTOM ACTION BUTTON: "View Profile" with real Arrow Icon */}
+      {/* 4. BOTTOM ACTION BUTTON: "View Profile" with real Lucide Arrow Icon */}
       <div className="w-full pt-4 mt-2">
         <button
           onClick={() => onSelect(candidate)}
