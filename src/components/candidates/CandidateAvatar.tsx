@@ -31,11 +31,13 @@ export const CandidateAvatar: React.FC<CandidateAvatarProps> = ({
     xl: 'w-8 h-8 text-base',
   };
 
-  const initials = candidate.name
+  const nameStr = candidate?.name || 'Candidate';
+  const initials = nameStr
     .split(' ')
+    .filter(Boolean)
     .map((n) => n[0])
     .join('')
-    .substring(0, 2);
+    .substring(0, 2) || 'C';
 
   const hasRealImage = !!candidate.avatarUrl && !imgError;
 

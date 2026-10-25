@@ -8,9 +8,7 @@ service cloud.firestore {
 
     // Public election candidate directory with realtime votes
     match /candidates/{candidateId} {
-      allow read: if true;
-      allow create, update: if true;
-      allow delete: if false;
+      allow read, write, delete: if true;
     }
 
     // Student user profiles

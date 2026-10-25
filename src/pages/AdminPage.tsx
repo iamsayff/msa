@@ -66,6 +66,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [candidateVotesInput, setCandidateVotesInput] = useState<{ [id: string]: number | string }>({});
   const [savedNotice, setSavedNotice] = useState<string | null>(null);
 
+  // Add Candidate modal state
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newCandName, setNewCandName] = useState('');
+  const [newCandPost, setNewCandPost] = useState<PostType>('president');
+  const [newCandFaculty, setNewCandFaculty] = useState('');
+
   // If not authorized, render restricted screen without displaying the secret emails
   if (!isAuthorized) {
     return (
@@ -122,20 +128,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     );
   }
 
-  // Filter candidates
+  // Filter candidates safely
   const filteredCandidates = candidates.filter((c) => {
-    const matchesPost = filterPost === 'all' || c.post === filterPost;
+    const name = c.name || '';
+    const post = c.post || '';
+    const faculty = c.faculty || '';
+    const matchesPost = filterPost === 'all' || post === filterPost;
     const matchesSearch = !candidateSearch || 
-      c.name.toLowerCase().includes(candidateSearch.toLowerCase()) ||
+      name.toLowerCase().includes(candidateSearch.toLowerCase()) ||
       c.claimedEmail?.toLowerCase().includes(candidateSearch.toLowerCase()) ||
-      c.faculty.toLowerCase().includes(candidateSearch.toLowerCase());
+      faculty.toLowerCase().includes(candidateSearch.toLowerCase());
     return matchesPost && matchesSearch;
   });
-
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newCandName, setNewCandName] = useState('');
-  const [newCandPost, setNewCandPost] = useState<PostType>('president');
-  const [newCandFaculty, setNewCandFaculty] = useState('');
 
   const handleCreateCandidate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -402,17 +406,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center font-bold text-slate-700 border border-slate-300">
                                 {cand.avatarUrl ? (
-                                  <img src={cand.avatarUrl} alt={cand.name} className="w-full h-full object-cover" />
+                                  <img src={cand.avatarUrl} alt={cand.name || 'Candidate'} className="w-full h-full object-cover" />
                                 ) : (
-                                  cand.name.charAt(0)
+                                  (cand.name || 'Candidate').charAt(0)
                                 )}
                               </div>
                               <div>
                                 <div className="font-extrabold text-slate-900 text-sm">
-                                  {cand.name}
+                                  {cand.name || 'Unnamed Candidate'}
                                 </div>
                                 <div className="text-[11px] text-slate-400 capitalize">
-                                  {cand.post.replace('_', ' ')} • {cand.faculty}
+                                  {(cand.post || '').replace('_', ' ')} • {cand.faculty || 'Faculty'}
                                 </div>
                               </div>
                             </div>
@@ -541,6 +545,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     <span>Full Profile Editor Page</span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleDeleteCandidate(cand.id, cand.name)}
+                                    className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs flex items-center gap-1.5 transition-colors border border-rose-200 shadow-2xs cursor-pointer"
+                                    title="Delete Candidate"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                                    <span>Delete</span>
                                   </button>
                                 </>
                               )}

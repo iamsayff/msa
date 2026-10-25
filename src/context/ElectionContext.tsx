@@ -67,39 +67,21 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const candidatesCol = collection(db, 'candidates');
 
-    const unsubscribe = onSnapshot(candidatesCol, async (snapshot) => {
-      if (snapshot.empty) {
-        // Seed initial candidates into Firestore
-        try {
-          const batch = writeBatch(db);
-          MOCK_CANDIDATES.forEach((cand) => {
-            const candRef = doc(db, 'candidates', cand.id);
-            batch.set(candRef, {
-              ...cand,
-              serialNumber: cand.serialNumber !== undefined ? cand.serialNumber : 0,
-              votesCount: cand.votesCount || 100,
-            }, { merge: true });
-          });
-          await batch.commit();
-        } catch (err) {
-          console.warn('Initial candidate seeding notice:', err);
-        }
-      } else {
-        const liveCandidates: Candidate[] = [];
-        snapshot.forEach((docSnap) => {
-          const cdata = docSnap.data() as Candidate;
-          liveCandidates.push({ 
-            ...cdata, 
-            id: docSnap.id,
-            serialNumber: cdata.serialNumber !== undefined ? cdata.serialNumber : 0,
-          });
+    const unsubscribe = onSnapshot(candidatesCol, (snapshot) => {
+      const liveCandidates: Candidate[] = [];
+      snapshot.forEach((docSnap) => {
+        const cdata = docSnap.data() as Candidate;
+        liveCandidates.push({ 
+          ...cdata, 
+          id: docSnap.id,
+          serialNumber: cdata.serialNumber !== undefined ? cdata.serialNumber : 0,
         });
-        setCandidates(liveCandidates);
-        setLoading(false);
-      }
+      });
+      setCandidates(liveCandidates);
+      setLoading(false);
     }, (error) => {
       console.warn('Realtime candidates sync notice:', error);
-      setCandidates(MOCK_CANDIDATES);
+      setCandidates([]);
       setLoading(false);
     });
 
@@ -496,20 +478,43 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       id,
       name: newCandidateData.name.trim(),
       post: newCandidateData.post,
-      faculty: newCandidateData.faculty.trim() || 'Faculty of Arts',
+      faculty: newCandidateData.faculty.trim() || '',
       quote: '',
-      year: 'Final Year',
+      year: '',
       program: '',
       hallOfResidence: '',
       enrollmentNo: '',
       avatarUrl: '',
-      symbol: '🌟',
-      symbolName: 'Candidate Star',
+      symbol: '',
+      symbolName: '',
       bio: '',
+      fullBio: [],
       manifestoHighlights: [],
       manifestoDetails: [],
+      leadershipRoles: [],
+      qaAnswers: [],
+      campaignVideoUrl: '',
+      manifestoPdfUrl: '',
+      manifestoPdfName: '',
+      contactEmail: '',
+      instagram: '',
+      phone: '',
+      linkedin: '',
+      twitter: '',
+      whatsapp: '',
+      officeAddress: '',
+      visitingHours: '',
       votesCount: 0,
       serialNumber: candidates.length + 1,
+      aboutMe: '',
+      whyRunning: '',
+      skills: [],
+      signatureQuote: '',
+      sloganBanner: '',
+      galleryPhotos: [],
+      experienceRecords: [],
+      achievementsList: [],
+      visionGoals: [],
     };
 
     setCandidates((curr) => [...curr, newCand]);

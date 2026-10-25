@@ -45,12 +45,15 @@ export const CandidatesSection: React.FC<CandidatesSectionProps> = ({
   };
 
   // Filter candidates
-  const filteredCandidates = (candidates.length > 0 ? candidates : MOCK_CANDIDATES).filter((c) => {
+  const filteredCandidates = candidates.filter((c) => {
+    const name = c.name || '';
+    const faculty = c.faculty || '';
+    const quote = c.quote || '';
     const matchesSearch =
       activeSearch === '' ||
-      c.name.toLowerCase().includes(activeSearch.toLowerCase()) ||
-      c.faculty.toLowerCase().includes(activeSearch.toLowerCase()) ||
-      (c.quote && c.quote.toLowerCase().includes(activeSearch.toLowerCase()));
+      name.toLowerCase().includes(activeSearch.toLowerCase()) ||
+      faculty.toLowerCase().includes(activeSearch.toLowerCase()) ||
+      quote.toLowerCase().includes(activeSearch.toLowerCase());
     return matchesSearch;
   });
 

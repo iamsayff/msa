@@ -37,8 +37,8 @@ export const AllCandidatesPage: React.FC<AllCandidatesPageProps> = ({
   ballotSelections,
   initialPostFilter = 'all',
 }) => {
-  const { candidates = MOCK_CANDIDATES } = useElection();
-  const candidateList = candidates.length > 0 ? candidates : MOCK_CANDIDATES;
+  const { candidates = [] } = useElection();
+  const candidateList = candidates;
 
   const [selectedPost, setSelectedPost] = useState<PostType | 'all'>(initialPostFilter);
   const [searchQuery, setSearchQuery] = useState('');
