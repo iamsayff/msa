@@ -362,18 +362,20 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
           <div className="lg:col-span-4 w-full flex flex-col items-center lg:items-end justify-center space-y-3">
             <div className="p-4 sm:p-5 rounded-2xl bg-white border border-emerald-200/80 shadow-xs w-full max-w-full sm:max-w-xl lg:max-w-[280px]">
               <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-3.5 sm:gap-4 lg:gap-2 text-center sm:text-left lg:text-center">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-50 text-emerald-800 font-black text-3xl sm:text-4xl flex items-center justify-center shrink-0 border-2 border-emerald-200 shadow-2xs">
-                  #{candidate.serialNumber ?? 0}
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-50 text-emerald-800 font-black text-2xl sm:text-3xl flex items-center justify-center shrink-0 border-2 border-emerald-200 shadow-2xs text-center">
+                  {candidate.serialNumber ? `#${candidate.serialNumber}` : '—'}
                 </div>
                 <div className="flex-1 space-y-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                     Official Ballot Serial No.
                   </span>
                   <h4 className="font-extrabold text-sm sm:text-base text-slate-900">
-                    Candidate #{candidate.serialNumber ?? 0}
+                    {candidate.serialNumber ? `Candidate #${candidate.serialNumber}` : 'Unallotted Ballot'}
                   </h4>
                   <p className="text-[11px] text-slate-500 leading-snug">
-                    AMUSU Official Ballot Number Allotted by Election Officer
+                    {candidate.serialNumber
+                      ? 'AMUSU Official Ballot Number Allotted by Election Officer'
+                      : 'Ballot serial number pending official allotment by Election Officer'}
                   </p>
                   {candidate.claimedEmail && (
                     <div className="pt-1.5 border-t border-slate-100 flex items-center justify-center sm:justify-start lg:justify-center gap-1 text-[10px] font-bold text-emerald-700">

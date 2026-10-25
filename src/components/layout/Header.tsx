@@ -59,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo Badge for AMUSU Elections */}
           <div className="flex items-center cursor-pointer hover:opacity-95 transition-opacity py-1 min-w-0">
             <img
-              src="https://i.ibb.co/GfcGk7YJ/Green-Mosque-Emblem-with-Amu-Suelections-in-Wordmark.png"
+              src="https://i.ibb.co/rrNwtYY/Green-Mosque-Emblem-and-Election-Wordmark.png"
               alt="AMUSU Elections.in - Know Your Candidate"
               className="h-10 sm:h-14 md:h-18 w-auto max-w-[170px] xs:max-w-[210px] sm:max-w-[320px] md:max-w-[360px] object-contain drop-shadow-xs transition-transform hover:scale-102"
             />

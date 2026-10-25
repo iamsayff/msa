@@ -68,20 +68,52 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const candidatesCol = collection(db, 'candidates');
 
     const unsubscribe = onSnapshot(candidatesCol, (snapshot) => {
-      const liveCandidates: Candidate[] = [];
-      snapshot.forEach((docSnap) => {
-        const cdata = docSnap.data() as Candidate;
-        liveCandidates.push({ 
-          ...cdata, 
-          id: docSnap.id,
-          serialNumber: cdata.serialNumber !== undefined ? cdata.serialNumber : 0,
+      if (snapshot.empty) {
+        try {
+          const batch = writeBatch(db);
+          MOCK_CANDIDATES.forEach((cand) => {
+            const candRef = doc(db, 'candidates', cand.id);
+            batch.set(candRef, cand, { merge: true });
+          });
+          batch.commit().catch((e) => console.warn('Candidate seed notice:', e));
+        } catch (e) {
+          console.warn('Candidate batch notice:', e);
+        }
+        setCandidates(MOCK_CANDIDATES);
+      } else {
+        const liveCandidates: Candidate[] = [];
+        snapshot.forEach((docSnap) => {
+          const cdata = docSnap.data() as Candidate;
+          liveCandidates.push({ 
+            ...cdata, 
+            id: docSnap.id,
+            serialNumber: cdata.serialNumber !== undefined && cdata.serialNumber !== 0 ? cdata.serialNumber : undefined,
+          });
         });
-      });
-      setCandidates(liveCandidates);
+
+        // Ensure newly added MOCK_CANDIDATES (e.g. Cabinet Members) are synced into Firestore
+        const existingIds = new Set(liveCandidates.map((c) => c.id));
+        const missingCandidates = MOCK_CANDIDATES.filter((mc) => !existingIds.has(mc.id));
+
+        if (missingCandidates.length > 0) {
+          try {
+            const batch = writeBatch(db);
+            missingCandidates.forEach((mc) => {
+              const candRef = doc(db, 'candidates', mc.id);
+              batch.set(candRef, mc, { merge: true });
+            });
+            batch.commit().catch((e) => console.warn('Missing candidates seed notice:', e));
+          } catch (e) {
+            console.warn('Batch seed error:', e);
+          }
+        }
+
+        setCandidates([...liveCandidates, ...missingCandidates]);
+      }
       setLoading(false);
     }, (error) => {
       console.warn('Realtime candidates sync notice:', error);
-      setCandidates([]);
+      setCandidates(MOCK_CANDIDATES);
       setLoading(false);
     });
 

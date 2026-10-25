@@ -115,7 +115,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
                   className="text-[9px] font-extrabold uppercase mt-0.5 opacity-80"
                   style={{ color: cardAccentColor }}
                 >
-                  Ballot #{candidate.serialNumber ?? 0}
+                  {candidate.serialNumber ? `Ballot #${candidate.serialNumber}` : 'Unallotted Ballot'}
                 </span>
               </div>
             )}
