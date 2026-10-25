@@ -360,15 +360,6 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
             <Eye className="w-3.5 h-3.5" />
             <span>View Live Profile</span>
           </button>
-
-          <button
-            onClick={handleSaveAll}
-            disabled={saving}
-            className="px-6 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 text-white font-bold text-xs shadow-sm flex items-center gap-2 transition-all active:scale-98"
-          >
-            <Save className="w-4 h-4" />
-            <span>{saving ? 'Saving to Database...' : 'Save All Changes'}</span>
-          </button>
         </div>
       </div>
 
