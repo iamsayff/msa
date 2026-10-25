@@ -50,7 +50,7 @@ export const CandidatesSection: React.FC<CandidatesSectionProps> = ({
       activeSearch === '' ||
       c.name.toLowerCase().includes(activeSearch.toLowerCase()) ||
       c.faculty.toLowerCase().includes(activeSearch.toLowerCase()) ||
-      c.quote.toLowerCase().includes(activeSearch.toLowerCase());
+      (c.quote && c.quote.toLowerCase().includes(activeSearch.toLowerCase()));
     return matchesSearch;
   });
 
