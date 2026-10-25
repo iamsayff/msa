@@ -1,38 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface FullWidthBannerProps {
   src: string;
   alt: string;
   className?: string;
+  priority?: boolean;
   edgeToEdge?: boolean;
-  fitMode?: 'contain' | 'cover' | 'auto';
+  fitMode?: string;
 }
 
 export const FullWidthBanner: React.FC<FullWidthBannerProps> = ({
   src,
   alt,
   className = '',
-  edgeToEdge = true,
-  fitMode = 'contain',
+  priority = true,
 }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <div 
-      className={`w-full overflow-hidden select-none pointer-events-none flex items-center justify-center ${
-        edgeToEdge 
-          ? '-mx-4 sm:-mx-6 lg:-mx-8 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] rounded-none sm:rounded-2xl lg:rounded-3xl shadow-xs' 
-          : 'rounded-2xl sm:rounded-3xl shadow-xs'
-      } border-y sm:border border-slate-200/80 bg-slate-900/5 ${className}`}
+      className={`w-full overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xs border border-slate-200/80 bg-slate-100 relative group flex items-center justify-center ${className}`}
     >
+      {/* Loading Skeleton Pulse */}
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse z-10 h-36 sm:h-52 md:h-64 lg:h-80" />
+      )}
+
       <img
         src={src}
         alt={alt}
-        className={`w-full h-auto max-h-[550px] ${
-          fitMode === 'cover'
-            ? 'object-cover h-48 sm:h-64 md:h-80 lg:h-96'
-            : 'object-contain'
-        } block select-none pointer-events-none transition-all duration-300`}
-        loading="lazy"
-        referrerPolicy="no-referrer"
+        onLoad={() => setIsLoaded(true)}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        className={`w-full h-36 sm:h-52 md:h-64 lg:h-80 xl:h-96 object-cover object-center block select-none pointer-events-none transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
       />
     </div>
   );

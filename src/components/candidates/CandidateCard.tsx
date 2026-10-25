@@ -1,7 +1,6 @@
-import React from 'react';
-import { ArrowRight, GraduationCap, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart } from 'lucide-react';
 import { Candidate, PostCategoryConfig } from '../../types/election';
-import { CandidateAvatar } from './CandidateAvatar';
 import { useElection } from '../../context/ElectionContext';
 
 interface CandidateCardProps {
@@ -12,92 +11,159 @@ interface CandidateCardProps {
   isVoted?: boolean;
 }
 
+// Color palette mapping for "different colors" requirement
+const VIBRANT_COLOR_PALETTE: Record<string, string> = {
+  president: '#dc2626',           // Crimson Red (as shown in reference image)
+  vice_president: '#059669',      // Emerald Green
+  honorary_secretary: '#2563eb',  // Royal Blue
+  cabinet_member: '#7c3aed',      // Deep Purple
+  court_member: '#d97706',        // Amber Gold
+};
+
+const EXTRA_COLORS = ['#dc2626', '#059669', '#2563eb', '#7c3aed', '#d97706', '#0d9488', '#c026d3', '#4f46e5'];
+
 export const CandidateCard: React.FC<CandidateCardProps> = ({
   candidate,
   categoryConfig,
   onSelect,
-  onQuickVote,
   isVoted = false,
 }) => {
   const { getCandidateVotes } = useElection();
   const liveSupports = getCandidateVotes(candidate.id);
+  const [imgError, setImgError] = useState(false);
+
+  // Pick vibrant accent color for this specific candidate/post
+  const postKey = candidate.post || 'president';
+  let cardAccentColor = VIBRANT_COLOR_PALETTE[postKey] || categoryConfig?.themeColor?.accentColor || '#dc2626';
+
+  // If candidate has a specific serial number or ID offset, allow color variation
+  if (!VIBRANT_COLOR_PALETTE[postKey] && candidate.id) {
+    const charCode = candidate.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    cardAccentColor = EXTRA_COLORS[charCode % EXTRA_COLORS.length];
+  }
+
+  // Label for top-left ribbon
+  const postLabel = categoryConfig?.label || candidate.post?.replace('_', ' ') || 'Candidate';
+
+  // Initials for avatar fallback
+  const initials = (candidate.name || 'Candidate')
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 hover:border-slate-200/90 shadow-2xs hover:shadow-lg transition-all p-5 flex flex-col items-center text-center group justify-between h-full relative">
-      {/* Top Left: Ballot Serial Number or Supported badge */}
-      <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
-        {isVoted ? (
-          <div className="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs">
-            <span>✓ Supported</span>
-          </div>
-        ) : (
-          <div className="bg-slate-100/90 border border-slate-200 text-slate-700 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full shadow-2xs tracking-tight">
-            <span>Ballot #{candidate.serialNumber ?? 0}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Top Right: Supports Label matching Navbar Support Button style with heart icon & outline border color */}
-      <div className="absolute top-3 right-3 z-10">
-        <span
-          className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1 rounded-full text-white font-extrabold text-xs shadow-sm tracking-tight cursor-default"
-          style={{ backgroundColor: categoryConfig.themeColor.accentColor }}
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 p-5 sm:p-6 flex flex-col items-center text-center relative overflow-hidden group justify-between h-full w-full">
+      
+      {/* 1. TOP-LEFT DIAGONAL RIBBON BADGE */}
+      <div className="absolute top-0 left-0 w-32 h-32 overflow-hidden pointer-events-none z-10">
+        <div
+          className="absolute top-6 -left-10 w-40 -rotate-45 py-1 text-center font-black text-[10px] sm:text-[11px] text-white shadow-md uppercase tracking-wider leading-tight select-none"
+          style={{ backgroundColor: cardAccentColor }}
         >
-          <Heart className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white text-white" />
-          <span>{liveSupports.toLocaleString()} Supports</span>
-        </span>
+          {postLabel}
+        </div>
       </div>
 
+      {/* 2. TOP-RIGHT SUPPORTS BADGE */}
+      <div className="absolute top-3.5 right-3.5 z-10">
+        <div
+          className="px-3.5 py-1.5 rounded-2xl text-white shadow-md flex flex-col items-center justify-center text-center transition-transform group-hover:scale-105 select-none"
+          style={{ backgroundColor: cardAccentColor }}
+        >
+          <div className="flex items-center gap-1 font-black text-xs sm:text-sm leading-none">
+            <Heart className="w-3.5 h-3.5 fill-white text-white shrink-0" />
+            <span>{liveSupports.toLocaleString()}</span>
+          </div>
+          <span className="text-[9px] font-extrabold opacity-95 leading-tight mt-0.5">Supports</span>
+        </div>
+      </div>
+
+      {/* 3. CENTER CONTENT AREA */}
       <div className="w-full flex flex-col items-center mt-3">
-        {/* Candidate Avatar with Real Photo or Stylized Photo Placeholder */}
-        <div className="mb-3.5">
-          <CandidateAvatar
-            candidate={candidate}
-            categoryConfig={categoryConfig}
-            size="md"
-          />
+        
+        {/* Large Circular Avatar with Thick Accent Border */}
+        <div className="mt-4 mb-2 flex justify-center">
+          <div
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full p-1 bg-white shadow-md flex items-center justify-center relative overflow-hidden transition-transform duration-300 group-hover:scale-102 shrink-0"
+            style={{ border: `4px solid ${cardAccentColor}` }}
+          >
+            {candidate.avatarUrl && !imgError ? (
+              <img
+                src={candidate.avatarUrl}
+                alt={candidate.name}
+                onError={() => setImgError(true)}
+                className="w-full h-full object-cover rounded-full select-none"
+              />
+            ) : (
+              <div
+                className="w-full h-full rounded-full flex flex-col items-center justify-center select-none"
+                style={{ backgroundColor: `${cardAccentColor}18` }}
+              >
+                <span
+                  className="text-xl sm:text-2xl font-black tracking-wider"
+                  style={{ color: cardAccentColor }}
+                >
+                  {initials}
+                </span>
+                <span
+                  className="text-[9px] font-extrabold uppercase mt-0.5 opacity-80"
+                  style={{ color: cardAccentColor }}
+                >
+                  Ballot #{candidate.serialNumber ?? 0}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Candidate Name */}
-        <h3 className="font-extrabold text-slate-900 text-base leading-snug group-hover:text-slate-800">
+        <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug mt-1">
           {candidate.name}
         </h3>
 
-        {/* Candidate Quote in Quotes */}
-        <p className="text-xs text-slate-500 font-normal mt-1.5 line-clamp-2 px-1 italic">
-          &ldquo;{candidate.quote}&rdquo;
+        {/* Bio / Tagline in Double Quotes */}
+        <p className="text-xs sm:text-sm text-slate-600 font-medium italic mt-1 line-clamp-2 px-1 max-w-xs">
+          &ldquo;{candidate.quote || candidate.bio || 'Working for Student Rights & Reform'}&rdquo;
         </p>
 
-        {/* Faculty and Degree/Program Meta */}
-        <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 mt-2.5 flex-wrap">
-          <GraduationCap className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-          <span>{candidate.faculty || 'Faculty'}</span>
-          <span>•</span>
-          <span>{candidate.program || candidate.year || 'Degree / Program'}</span>
-        </div>
-      </div>
+        {/* Department / Faculty Name • Course */}
+        <p className="text-xs font-bold text-slate-800 mt-2 tracking-tight">
+          {candidate.faculty || 'Department / Faculty'} • {candidate.program || candidate.year || 'Course'}
+        </p>
 
-      {/* Action Buttons: View Profile and Quick Action */}
-      <div className="w-full pt-3.5 mt-3 border-t border-slate-50 flex items-center justify-between gap-2">
-        <button
-          onClick={() => onSelect(candidate)}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-bold transition-all py-1.5 px-2 rounded-lg hover:bg-slate-50"
-          style={{ color: categoryConfig.themeColor.accentColor }}
-        >
-          <span>View Profile</span>
-          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-        </button>
-
-        {onQuickVote && (
-          <button
-            onClick={() => onQuickVote(candidate)}
-            title="Support this candidate"
-            className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 transition-colors"
-          >
-            <Heart className="w-3.5 h-3.5 fill-rose-50 text-rose-500" />
-          </button>
+        {isVoted && (
+          <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold">
+            <span>✓ Voted</span>
+          </div>
         )}
       </div>
+
+      {/* 4. BOTTOM ACTION BUTTON: "View Profile -->" */}
+      <div className="w-full pt-4 mt-2">
+        <button
+          onClick={() => onSelect(candidate)}
+          className="w-full py-2.5 px-6 rounded-2xl border-2 font-black text-xs sm:text-sm tracking-wide transition-all shadow-2xs hover:shadow-md cursor-pointer flex items-center justify-center gap-1.5 active:scale-98"
+          style={{
+            borderColor: cardAccentColor,
+            color: cardAccentColor,
+            backgroundColor: 'transparent',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = cardAccentColor;
+            e.currentTarget.style.color = '#ffffff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = cardAccentColor;
+          }}
+        >
+          <span>View Profile --&gt;</span>
+        </button>
+      </div>
+
     </div>
   );
 };

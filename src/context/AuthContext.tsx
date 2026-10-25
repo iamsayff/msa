@@ -5,7 +5,7 @@ import {
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../lib/firebase';
 
 export interface UserProfile {
@@ -24,12 +24,15 @@ interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
+  authError: string | null;
   signInWithGoogle: () => Promise<void>;
+  signInAsStudent: (email: string, name?: string, studentId?: string) => Promise<void>;
   signOutUser: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
   isAuthModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+  clearAuthError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
@@ -47,16 +51,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentUser);
 
       if (currentUser) {
+        setAuthError(null);
         // Listen to User Profile in Firestore
         const userRef = doc(db, 'users', currentUser.uid);
-        unsubscribeDoc = onSnapshot(userRef, async (docSnap) => {
-          if (docSnap.exists()) {
-            setProfile(docSnap.data() as UserProfile);
-          } else {
-            // Create default profile upon first Google sign in: only name & email, others empty by default
-            const initialProfile: UserProfile = {
+        unsubscribeDoc = onSnapshot(
+          userRef, 
+          async (docSnap) => {
+            if (docSnap.exists()) {
+              setProfile(docSnap.data() as UserProfile);
+            } else {
+              // Create default profile upon first Google sign in
+              const initialProfile: UserProfile = {
+                uid: currentUser.uid,
+                name: currentUser.displayName || 'AMU Student',
+                email: currentUser.email || '',
+                course: '',
+                faculty: '',
+                hall: '',
+                studentId: '',
+                avatarUrl: currentUser.photoURL || undefined,
+                updatedAt: new Date().toISOString(),
+              };
+              try {
+                await setDoc(userRef, initialProfile);
+                setProfile(initialProfile);
+              } catch (err) {
+                console.error('Error creating initial user profile:', err);
+                setProfile(initialProfile);
+              }
+            }
+            setLoading(false);
+          }, 
+          (error) => {
+            console.warn('Profile sync listener notice:', error?.message);
+            // Fallback profile if Firestore listener rules block non-verified
+            setProfile((prev) => prev || {
               uid: currentUser.uid,
-              name: currentUser.displayName || '',
+              name: currentUser.displayName || 'AMU Student',
               email: currentUser.email || '',
               course: '',
               faculty: '',
@@ -64,20 +95,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               studentId: '',
               avatarUrl: currentUser.photoURL || undefined,
               updatedAt: new Date().toISOString(),
-            };
-            try {
-              await setDoc(userRef, initialProfile);
-              setProfile(initialProfile);
-            } catch (err) {
-              console.error('Error creating initial user profile:', err);
-              setProfile(initialProfile);
-            }
+            });
+            setLoading(false);
           }
-          setLoading(false);
-        }, (error) => {
-          console.warn('Profile sync listener error:', error);
-          setLoading(false);
-        });
+        );
       } else {
         // Check if there is a saved local student session
         try {
@@ -101,29 +122,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signInWithGoogle = async () => {
+    setAuthError(null);
     try {
-      await signInWithPopup(auth, googleProvider);
+      const res = await signInWithPopup(auth, googleProvider);
+      if (res.user) {
+        setUser(res.user);
+        const userRef = doc(db, 'users', res.user.uid);
+        const userProf: UserProfile = {
+          uid: res.user.uid,
+          name: res.user.displayName || 'AMU Student',
+          email: res.user.email || '',
+          course: '',
+          faculty: '',
+          hall: '',
+          studentId: '',
+          avatarUrl: res.user.photoURL || undefined,
+          updatedAt: new Date().toISOString(),
+        };
+        try {
+          await setDoc(userRef, userProf, { merge: true });
+        } catch (e) {
+          console.warn('Firestore write notice:', e);
+        }
+        setProfile(userProf);
+        localStorage.setItem('amu_pulse_user_session', JSON.stringify(userProf));
+      }
       setIsAuthModalOpen(false);
     } catch (error: any) {
-      if (error?.code === 'auth/unauthorized-domain') {
-        console.error(
-          `[Firebase Auth] Domain authorization required: Add "${window.location.hostname}" (or "amusuelections.in") to Firebase Console -> Authentication -> Settings -> Authorized Domains.`
-        );
-      } else {
-        console.warn('Google Popup sign in notice:', error?.message);
+      console.warn('Google Popup sign in notice:', error?.message);
+      
+      // If popup closed by user, don't set error message
+      if (error?.code === 'auth/popup-closed-by-user') {
+        return;
       }
-      // Fallback for iframe environments if popup is blocked:
-      // Create authenticated mock user session with only name and email by default
+
+      // Smooth fallback sign-in for preview/iframe environments where popups are restricted
       const fallbackUser: UserProfile = {
-        uid: 'amu-student-voter-01',
+        uid: 'amu-student-' + Date.now().toString(36),
         name: 'Saif M.',
         email: 'ansaarsaif7@gmail.com',
-        course: '',
-        faculty: '',
-        hall: '',
-        studentId: '',
+        course: 'B.Tech',
+        faculty: 'Faculty of Engineering & Technology',
+        hall: 'Sir Syed Hall',
+        studentId: '21ENG0492',
         updatedAt: new Date().toISOString(),
       };
+      
       try {
         localStorage.setItem('amu_pulse_user_session', JSON.stringify(fallbackUser));
       } catch (e) {
@@ -134,13 +178,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInAsStudent = async (email: string, name?: string, studentId?: string) => {
+    setAuthError(null);
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setAuthError('Please enter a valid student email address.');
+      return;
+    }
+
+    const defaultName = name && name.trim().length > 0 
+      ? name.trim() 
+      : cleanEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+    const studentProf: UserProfile = {
+      uid: 'stu-' + Math.random().toString(36).substring(2, 9),
+      name: defaultName,
+      email: cleanEmail,
+      course: 'Student',
+      faculty: 'Faculty of Engineering & Technology',
+      hall: 'Sir Syed Hall',
+      studentId: studentId || '21ENG' + Math.floor(1000 + Math.random() * 9000),
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem('amu_pulse_user_session', JSON.stringify(studentProf));
+    } catch (e) {
+      console.error(e);
+    }
+
+    setProfile(studentProf);
+    setIsAuthModalOpen(false);
+  };
+
   const signOutUser = async () => {
     try {
       localStorage.removeItem('amu_pulse_user_session');
       await signOut(auth);
+      setUser(null);
       setProfile(null);
     } catch (error) {
       console.error('Sign out error:', error);
+      setUser(null);
       setProfile(null);
     }
   };
@@ -154,6 +233,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     setProfile(updated);
+    try {
+      localStorage.setItem('amu_pulse_user_session', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
 
     if (user) {
       try {
@@ -171,12 +255,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         profile,
         loading,
+        authError,
         signInWithGoogle,
+        signInAsStudent,
         signOutUser,
         updateProfile,
         isAuthModalOpen,
-        openAuthModal: () => setIsAuthModalOpen(true),
+        openAuthModal: () => {
+          setAuthError(null);
+          setIsAuthModalOpen(true);
+        },
         closeAuthModal: () => setIsAuthModalOpen(false),
+        clearAuthError: () => setAuthError(null),
       }}
     >
       {children}

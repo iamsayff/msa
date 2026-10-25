@@ -7,7 +7,8 @@ import {
   X, 
   Heart,
   LogOut, 
-  Edit3 
+  Edit3,
+  User 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { SupportModal } from '../modals/SupportModal';
@@ -29,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenEditProfile,
   hasVoted = false,
 }) => {
-  const { user, profile, signOutUser } = useAuth();
+  const { user, profile, signOutUser, openAuthModal } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
 
@@ -79,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* User Profile Menu (when signed in) */}
-            {(user || profile) && (
+            {(user || profile) ? (
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
@@ -151,6 +152,14 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                 )}
               </div>
+            ) : (
+              <button
+                onClick={openAuthModal}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </button>
             )}
           </div>
         </div>
