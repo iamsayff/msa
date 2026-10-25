@@ -1,0 +1,8 @@
+{
+  "name": "AMU Pulse - Student Election Dashboard",
+  "description": "Student election portal and candidate directory for AMU Elections 2025. Explore verified candidate profiles, manifestos, campus issues, and live election timeline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

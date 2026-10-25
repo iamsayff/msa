@@ -1,0 +1,94 @@
+{
+  "entities": {
+    "Candidate": {
+      "title": "Candidate",
+      "description": "Contesting candidate leader in AMU Elections 2025",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "post": { "type": "string", "enum": ["president", "vice_president", "honorary_secretary", "cabinet_member", "court_member"] },
+        "quote": { "type": "string" },
+        "faculty": { "type": "string" },
+        "program": { "type": "string" },
+        "year": { "type": "string" },
+        "hallOfResidence": { "type": "string" },
+        "enrollmentNo": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "symbol": { "type": "string" },
+        "symbolName": { "type": "string" },
+        "bio": { "type": "string" },
+        "votesCount": { "type": "number" },
+        "contactEmail": { "type": "string" },
+        "instagram": { "type": "string" }
+      },
+      "required": ["id", "name", "post", "votesCount"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered AMU student voter profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "course": { "type": "string" },
+        "faculty": { "type": "string" },
+        "hall": { "type": "string" },
+        "studentId": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "UserVote": {
+      "title": "UserVote",
+      "description": "Official confidential ballot cast by an AMU student",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "president": { "type": "string" },
+        "vicePresident": { "type": "string" },
+        "honorarySecretary": { "type": "string" },
+        "courtMember": { "type": "string" },
+        "cabinetMembers": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId"]
+    },
+    "CampusIssue": {
+      "title": "CampusIssue",
+      "description": "Student reform issues submitted for voting and feedback",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "talksCount": { "type": "number" },
+        "upvotesCount": { "type": "number" },
+        "status": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["id", "title", "category"]
+    }
+  },
+  "firestore": {
+    "/candidates/{candidateId}": {
+      "schema": { "$ref": "#/entities/Candidate" },
+      "description": "Contesting election candidates with realtime live vote counts"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private student voter profiles editable by the user"
+    },
+    "/votes/{userId}": {
+      "schema": { "$ref": "#/entities/UserVote" },
+      "description": "Ballots submitted and changeable by verified Google-authenticated students"
+    },
+    "/campusIssues/{issueId}": {
+      "schema": { "$ref": "#/entities/CampusIssue" },
+      "description": "Campus issues and student voices with realtime upvote totals"
+    }
+  }
+}
