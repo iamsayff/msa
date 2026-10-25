@@ -68,12 +68,12 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
           &ldquo;{candidate.quote}&rdquo;
         </p>
 
-        {/* Faculty and Year Meta */}
+        {/* Faculty and Degree/Program Meta */}
         <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 mt-2.5 flex-wrap">
           <GraduationCap className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-          <span>{candidate.faculty}</span>
+          <span>{candidate.faculty || 'Faculty'}</span>
           <span>•</span>
-          <span>{candidate.year}</span>
+          <span>{candidate.program || candidate.year || 'Degree / Program'}</span>
         </div>
       </div>
 

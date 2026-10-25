@@ -49,6 +49,7 @@ import { useRouter } from './lib/router';
 import { useAuth } from './context/AuthContext';
 import { useElection } from './context/ElectionContext';
 import { Candidate, PostType, CampusIssue, TimelinePhase } from './types/election';
+import { getCandidateSlug } from './utils/candidateSlug';
 import { Newspaper, Info, ArrowLeft } from 'lucide-react';
 
 export default function App() {
@@ -80,7 +81,11 @@ export default function App() {
 
   // Find candidate for candidate profile page
   const selectedCandidate: Candidate | undefined = route.name === 'candidate_profile'
-    ? candidates.find((c) => c.id === route.candidateId || c.slug === route.candidateId) || candidates[0]
+    ? candidates.find((c) => 
+        c.id === route.candidateId || 
+        c.slug === route.candidateId || 
+        getCandidateSlug(c) === route.candidateId
+      ) || candidates[0]
     : undefined;
 
   // Scroll to section helper for home anchor links
@@ -99,7 +104,7 @@ export default function App() {
 
   // Open candidate profile with dedicated URL
   const handleOpenCandidateProfile = (candidate: Candidate) => {
-    navigate(`/candidate/${candidate.id}`);
+    navigate(`/candidate/${getCandidateSlug(candidate)}`);
   };
 
   // Vote for candidate handler (redirects to vote booth with candidate picked)
@@ -214,7 +219,7 @@ export default function App() {
               onBackToDashboard={() => navigate('/')}
               onVoteForCandidate={handleVoteForCandidate}
               onViewManifestoModal={() => navigate('/manifesto')}
-              onNavigateToEdit={(cand) => navigate(`/candidate/${cand.id}/edit`)}
+              onNavigateToEdit={(cand) => navigate(`/candidate/${getCandidateSlug(cand)}/edit`)}
             />
           )}
 
@@ -230,7 +235,7 @@ export default function App() {
           {route.name === 'admin' && (
             <AdminPage
               onBackToHome={() => navigate('/')}
-              onNavigateToEditCandidate={(cand) => navigate(`/candidate/${cand.id}/edit`)}
+              onNavigateToEditCandidate={(cand) => navigate(`/candidate/${getCandidateSlug(cand)}/edit`)}
             />
           )}
 

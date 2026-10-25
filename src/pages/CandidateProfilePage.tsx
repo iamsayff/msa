@@ -133,13 +133,10 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
   const [questionText, setQuestionText] = useState('');
   const [questionSent, setQuestionSent] = useState(false);
 
-  // Resolved gallery photos: custom photos with fallback to high-res AMU campus campaign moments
-  const galleryItems: CandidateGalleryItem[] = (candidate.galleryPhotos && candidate.galleryPhotos.length > 0
-    ? candidate.galleryPhotos.map((p, idx) => ({
-        ...p,
-        url: p.url && p.url.trim() ? p.url : (DEFAULT_CAMPUS_GALLERY[idx % DEFAULT_CAMPUS_GALLERY.length]?.url || '')
-      }))
-    : DEFAULT_CAMPUS_GALLERY);
+  // Resolved gallery photos: custom photos when defined, otherwise fallback to default campus photos
+  const galleryItems: CandidateGalleryItem[] = candidate.galleryPhotos !== undefined
+    ? candidate.galleryPhotos
+    : DEFAULT_CAMPUS_GALLERY;
 
   // Keyboard navigation for Lightbox image viewer
   useEffect(() => {
@@ -267,8 +264,8 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                 </span>
 
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-slate-700 border border-slate-200/80 font-medium shadow-2xs">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{candidate.year}</span>
+                  <BookOpen className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{candidate.program || candidate.year || 'Degree / Program'}</span>
                 </span>
 
                 {/* Supports Pill in Top Header matching Navbar Support Button style with heart icon & outline border color */}
@@ -543,7 +540,7 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 pt-2">
-                  {(candidate.skills && candidate.skills.length > 0 ? candidate.skills : skills).map((skill) => (
+                  {(candidate.skills !== undefined ? candidate.skills : skills).map((skill) => (
                     <span
                       key={skill}
                       className="px-3 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200/80 text-xs font-semibold"
@@ -562,7 +559,7 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                   </div>
 
                   <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                    {candidate.whyRunning || `I'm running for the ${category.label} post because I want to create a campus where students feel heard, supported and empowered. AMU has given us so much — now it's time to give back and work for a better future, together.`}
+                    {candidate.whyRunning !== undefined ? candidate.whyRunning : `I'm running for the ${category.label} post because I want to create a campus where students feel heard, supported and empowered. AMU has given us so much — now it's time to give back and work for a better future, together.`}
                   </p>
                 </div>
 
@@ -590,73 +587,86 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                 </div>
               </div>
 
-              {candidate.visionGoals && candidate.visionGoals.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {candidate.visionGoals.map((vg, idx) => (
-                    <div key={vg.id || idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                      <div className="flex items-center gap-2.5 text-emerald-800 font-bold text-sm">
-                        <Target className="w-4 h-4 text-emerald-600" />
-                        <span>{idx + 1}. {vg.title}</span>
+              {(() => {
+                const goalsList = candidate.visionGoals !== undefined ? candidate.visionGoals : null;
+                if (goalsList) {
+                  if (goalsList.length === 0) {
+                    return (
+                      <div className="py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        No vision goals or manifesto items added yet for this candidate profile.
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      {goalsList.map((vg, idx) => (
+                        <div key={vg.id || idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                          <div className="flex items-center gap-2.5 text-emerald-800 font-bold text-sm">
+                            <Target className="w-4 h-4 text-emerald-600" />
+                            <span>{idx + 1}. {vg.title}</span>
+                          </div>
+                          <p className="text-xs text-slate-600 leading-relaxed">
+                            {vg.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                      <div className="flex items-center gap-2.5 text-emerald-700 font-bold text-sm">
+                        <BookOpen className="w-4 h-4" />
+                        <span>1. 24x7 Digital Library & Extended Reading Rooms</span>
                       </div>
                       <p className="text-xs text-slate-600 leading-relaxed">
-                        {vg.description}
+                        Expanding high-speed Wi-Fi, adding 200 new charging desks, and extending midnight reading room hours in Maulana Azad Library during examination periods.
                       </p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                    <div className="flex items-center gap-2.5 text-emerald-700 font-bold text-sm">
-                      <BookOpen className="w-4 h-4" />
-                      <span>1. 24x7 Digital Library & Extended Reading Rooms</span>
-                    </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      Expanding high-speed Wi-Fi, adding 200 new charging desks, and extending midnight reading room hours in Maulana Azad Library during examination periods.
-                    </p>
-                  </div>
 
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                    <div className="flex items-center gap-2.5 text-blue-700 font-bold text-sm">
-                      <Coffee className="w-4 h-4" />
-                      <span>2. Dining Hall Quality & Drinking Water Standards</span>
+                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                      <div className="flex items-center gap-2.5 text-blue-700 font-bold text-sm">
+                        <Coffee className="w-4 h-4" />
+                        <span>2. Dining Hall Quality & Drinking Water Standards</span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        Institutionalizing democratic student mess committees in each hall, ensuring certified RO water coolers on every floor, and healthy dietary options.
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      Institutionalizing democratic student mess committees in each hall, ensuring certified RO water coolers on every floor, and healthy dietary options.
-                    </p>
-                  </div>
 
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                    <div className="flex items-center gap-2.5 text-purple-700 font-bold text-sm">
-                      <Clock className="w-4 h-4" />
-                      <span>3. 48-Hour Student Grievance Redressal</span>
+                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                      <div className="flex items-center gap-2.5 text-purple-700 font-bold text-sm">
+                        <Clock className="w-4 h-4" />
+                        <span>3. 48-Hour Student Grievance Redressal</span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        Launching an open online ticket portal where maintenance requests, scholarship inquiries, and fee issues are actively monitored and resolved.
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      Launching an open online ticket portal where maintenance requests, scholarship inquiries, and fee issues are actively monitored and resolved.
-                    </p>
-                  </div>
 
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                    <div className="flex items-center gap-2.5 text-amber-700 font-bold text-sm">
-                      <Briefcase className="w-4 h-4" />
-                      <span>4. Placement & Internship Drives for All Faculties</span>
+                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                      <div className="flex items-center gap-2.5 text-amber-700 font-bold text-sm">
+                        <Briefcase className="w-4 h-4" />
+                        <span>4. Placement & Internship Drives for All Faculties</span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        Connecting with national alumni networks to bring dedicated job fairs and skill workshops to Arts, Science, Commerce, and Social Sciences students.
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      Connecting with national alumni networks to bring dedicated job fairs and skill workshops to Arts, Science, Commerce, and Social Sciences students.
-                    </p>
-                  </div>
 
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 md:col-span-2">
-                    <div className="flex items-center gap-2.5 text-rose-700 font-bold text-sm">
-                      <Award className="w-4 h-4" />
-                      <span>5. Cultural & Sports Budget Revival</span>
+                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 md:col-span-2">
+                      <div className="flex items-center gap-2.5 text-rose-700 font-bold text-sm">
+                        <Award className="w-4 h-4" />
+                        <span>5. Cultural & Sports Budget Revival</span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        Revitalizing inter-hall sports tournaments, Sir Syed Day debate cups, and providing direct financial backing to active student cultural clubs.
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      Revitalizing inter-hall sports tournaments, Sir Syed Day debate cups, and providing direct financial backing to active student cultural clubs.
-                    </p>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               <div className="pt-4 flex justify-end">
                 {candidate.manifestoPdfUrl ? (
@@ -699,27 +709,50 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
               </div>
 
               <div className="space-y-4">
-                {(candidate.experienceRecords && candidate.experienceRecords.length > 0
-                  ? candidate.experienceRecords
-                  : [
-                      { id: '1', year: '2024', title: 'Senior Student Council Representative', organization: `Faculty of ${candidate.faculty}`, description: 'Represented over 800 students in departmental academic reviews, successfully negotiating flexible seminar schedules and textbook access.' },
-                      { id: '2', year: '2023', title: 'Convenor, Inter-Hall Cultural & Literary Meet', organization: 'General Education Centre (GEC)', description: 'Coordinated 16 student teams across Kennedy Auditorium and Strachey Hall, managing event budgeting, judges, and student reception.' },
-                      { id: '3', year: '2022', title: 'Dining & Health Committee Member', organization: candidate.hallOfResidence || 'Sir Syed Hall of Residence', description: 'Audited dining hall groceries, hygiene standards, and instituted a regular feedback log for student residents.' },
-                    ]
-                ).map((exp, idx) => (
-                  <div key={exp.id || idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
-                      {exp.year}
+                {(() => {
+                  const records = candidate.experienceRecords !== undefined ? candidate.experienceRecords : null;
+                  if (records) {
+                    if (records.length === 0) {
+                      return (
+                        <div className="py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                          No leadership or experience records listed for this candidate.
+                        </div>
+                      );
+                    }
+                    return records.map((exp, idx) => (
+                      <div key={exp.id || idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
+                          {exp.year}
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-sm text-slate-900">{exp.title}</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">{exp.organization}</p>
+                          <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                            {exp.description}
+                          </p>
+                        </div>
+                      </div>
+                    ));
+                  }
+                  return [
+                    { id: '1', year: '2024', title: 'Senior Student Council Representative', organization: `Faculty of ${candidate.faculty}`, description: 'Represented over 800 students in departmental academic reviews, successfully negotiating flexible seminar schedules and textbook access.' },
+                    { id: '2', year: '2023', title: 'Convenor, Inter-Hall Cultural & Literary Meet', organization: 'General Education Centre (GEC)', description: 'Coordinated 16 student teams across Kennedy Auditorium and Strachey Hall, managing event budgeting, judges, and student reception.' },
+                    { id: '3', year: '2022', title: 'Dining & Health Committee Member', organization: candidate.hallOfResidence || 'Sir Syed Hall of Residence', description: 'Audited dining hall groceries, hygiene standards, and instituted a regular feedback log for student residents.' },
+                  ].map((exp, idx) => (
+                    <div key={exp.id || idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
+                        {exp.year}
+                      </div>
+                      <div>
+                        <h4 className="font-extrabold text-sm text-slate-900">{exp.title}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">{exp.organization}</p>
+                        <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                          {exp.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-extrabold text-sm text-slate-900">{exp.title}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">{exp.organization}</p>
-                      <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                        {exp.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ));
+                })()}
               </div>
             </div>
           </div>
@@ -740,26 +773,47 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {(candidate.achievementsList && candidate.achievementsList.length > 0
-                  ? candidate.achievementsList
-                  : [
-                      { id: '1', year: '2024', title: 'Kennedy Memorial Debate Champion', category: 'University Literary Club • 2024', description: 'First place among 32 contesting universities across India.' },
-                      { id: '2', year: '2023', title: "Dean's Academic Merit Roll", category: `Faculty of ${candidate.faculty} • 2023`, description: 'Maintained consistent distinction in coursework and departmental seminars.' },
-                      { id: '3', year: '2023', title: 'Campus Blood Donation Organizer', category: 'J.N. Medical College Blood Bank • 2023', description: 'Helped mobilize over 350 student voluntary blood donors in a single drive.' },
-                      { id: '4', year: '2022', title: 'Best Student Resident Award', category: 'Sir Syed Hall Provostial Board • 2022', description: 'Awarded for exemplary discipline, peer mentorship, and hall community service.' },
-                    ]
-                ).map((ach, idx) => (
-                  <div key={ach.id || idx} className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/80 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                      <Award className="w-5 h-5" />
+                {(() => {
+                  const achs = candidate.achievementsList !== undefined ? candidate.achievementsList : null;
+                  if (achs) {
+                    if (achs.length === 0) {
+                      return (
+                        <div className="col-span-2 py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                          No key achievements or awards listed for this candidate.
+                        </div>
+                      );
+                    }
+                    return achs.map((ach, idx) => (
+                      <div key={ach.id || idx} className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/80 flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                          <Award className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-sm text-slate-900">{ach.title}</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">{ach.category} {ach.year ? `• ${ach.year}` : ''}</p>
+                          <p className="text-xs text-slate-600 mt-1.5">{ach.description}</p>
+                        </div>
+                      </div>
+                    ));
+                  }
+                  return [
+                    { id: '1', year: '2024', title: 'Kennedy Memorial Debate Champion', category: 'University Literary Club • 2024', description: 'First place among 32 contesting universities across India.' },
+                    { id: '2', year: '2023', title: "Dean's Academic Merit Roll", category: `Faculty of ${candidate.faculty} • 2023`, description: 'Maintained consistent distinction in coursework and departmental seminars.' },
+                    { id: '3', year: '2023', title: 'Campus Blood Donation Organizer', category: 'J.N. Medical College Blood Bank • 2023', description: 'Helped mobilize over 350 student voluntary blood donors in a single drive.' },
+                    { id: '4', year: '2022', title: 'Best Student Resident Award', category: 'Sir Syed Hall Provostial Board • 2022', description: 'Awarded for exemplary discipline, peer mentorship, and hall community service.' },
+                  ].map((ach, idx) => (
+                    <div key={ach.id || idx} className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/80 flex items-start gap-3.5">
+                      <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-extrabold text-sm text-slate-900">{ach.title}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">{ach.category} {ach.year ? `• ${ach.year}` : ''}</p>
+                        <p className="text-xs text-slate-600 mt-1.5">{ach.description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-extrabold text-sm text-slate-900">{ach.title}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">{ach.category} {ach.year ? `• ${ach.year}` : ''}</p>
-                      <p className="text-xs text-slate-600 mt-1.5">{ach.description}</p>
-                    </div>
-                  </div>
-                ))}
+                  ));
+                })()}
               </div>
             </div>
           </div>
@@ -790,7 +844,12 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
 
               {/* Clean Responsive Photo Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-                {galleryItems.map((photo, idx) => (
+                {galleryItems.length === 0 ? (
+                  <div className="col-span-3 py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                    No campaign photos uploaded yet for this candidate profile.
+                  </div>
+                ) : (
+                  galleryItems.map((photo, idx) => (
                   <div
                     key={photo.id || idx}
                     onClick={() => setActiveLightboxIndex(idx)}
@@ -823,7 +882,7 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                       )}
                     </div>
                   </div>
-                ))}
+                )))}
               </div>
             </div>
           </div>

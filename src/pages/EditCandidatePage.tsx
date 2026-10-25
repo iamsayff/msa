@@ -33,6 +33,7 @@ import {
   CandidateAchievementItem, 
   CandidateVisionItem 
 } from '../types/election';
+import { getCandidateSlug } from '../utils/candidateSlug';
 import { useElection } from '../context/ElectionContext';
 import { useAuth } from '../context/AuthContext';
 import { POST_CATEGORIES } from '../data/mockElectionData';
@@ -51,7 +52,11 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
   const { candidates, updateCandidate } = useElection();
   const { user, profile } = useAuth();
 
-  const candidate = candidates.find((c) => c.id === candidateId || c.slug === candidateId);
+  const candidate = candidates.find((c) => 
+    c.id === candidateId || 
+    c.slug === candidateId || 
+    getCandidateSlug(c) === candidateId
+  );
 
   const [activeTab, setActiveTab] = useState<
     'basic' | 'about' | 'vision' | 'experience' | 'achievements' | 'gallery' | 'contact'
@@ -113,66 +118,38 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
     if (candidate && candidate.id) {
       setName(candidate.name || '');
       setSerialNumber(candidate.serialNumber !== undefined ? candidate.serialNumber : 0);
-      setQuote(candidate.quote || '');
-      setFaculty(candidate.faculty || '');
-      setProgram(candidate.program || '');
-      setYear(candidate.year || '');
-      setHallOfResidence(candidate.hallOfResidence || '');
-      setEnrollmentNo(candidate.enrollmentNo || '');
-      setClaimedEmail(candidate.claimedEmail || '');
+      setQuote(candidate.quote !== undefined ? candidate.quote : '');
+      setFaculty(candidate.faculty !== undefined ? candidate.faculty : '');
+      setProgram(candidate.program !== undefined ? candidate.program : '');
+      setYear(candidate.year !== undefined ? candidate.year : '');
+      setHallOfResidence(candidate.hallOfResidence !== undefined ? candidate.hallOfResidence : '');
+      setEnrollmentNo(candidate.enrollmentNo !== undefined ? candidate.enrollmentNo : '');
+      setClaimedEmail(candidate.claimedEmail !== undefined ? candidate.claimedEmail : '');
 
-      setAvatarUrl(candidate.avatarUrl || '');
-      setCampaignVideoUrl(candidate.campaignVideoUrl || '');
-      setManifestoPdfUrl(candidate.manifestoPdfUrl || '');
-      setManifestoPdfName(candidate.manifestoPdfName || (candidate.manifestoPdfUrl ? 'AMUSU_Candidate_Manifesto.pdf' : ''));
+      setAvatarUrl(candidate.avatarUrl !== undefined ? candidate.avatarUrl : '');
+      setCampaignVideoUrl(candidate.campaignVideoUrl !== undefined ? candidate.campaignVideoUrl : '');
+      setManifestoPdfUrl(candidate.manifestoPdfUrl !== undefined ? candidate.manifestoPdfUrl : '');
+      setManifestoPdfName(candidate.manifestoPdfName !== undefined ? candidate.manifestoPdfName : '');
 
-      setBio(candidate.bio || '');
-      setAboutMe(candidate.aboutMe || `I am ${candidate.name}, a dedicated student from the ${candidate.faculty}. I believe in the power of unity, open dialogue and collective action.`);
-      setWhyRunning(candidate.whyRunning || `I am running for the student union because I want to create a campus where students feel heard, supported and empowered.`);
-      setSignatureQuote(candidate.signatureQuote || candidate.quote || 'Real change happens when students stop being just recipients of policies and start authoring them.');
-      setSloganBanner(candidate.sloganBanner || 'Stronger Students • Brighter AMU');
-      setSkills(candidate.skills && candidate.skills.length > 0 ? candidate.skills : [
-        'Student Welfare Advocacy',
-        'Open Governance',
-        'Active Problem Solving',
-        'Public Speaking',
-        'Campus Unity',
-      ]);
+      setBio(candidate.bio !== undefined ? candidate.bio : '');
+      setAboutMe(candidate.aboutMe !== undefined ? candidate.aboutMe : '');
+      setWhyRunning(candidate.whyRunning !== undefined ? candidate.whyRunning : '');
+      setSignatureQuote(candidate.signatureQuote !== undefined ? candidate.signatureQuote : '');
+      setSloganBanner(candidate.sloganBanner !== undefined ? candidate.sloganBanner : '');
+      setSkills(candidate.skills !== undefined ? candidate.skills : []);
 
-      setVisionGoals(candidate.visionGoals && candidate.visionGoals.length > 0 ? candidate.visionGoals : [
-        { id: '1', title: '24x7 Digital Library & Extended Reading Rooms', category: 'Academic', description: 'Expanding high-speed Wi-Fi, adding 200 new charging desks, and extending midnight reading room hours in Maulana Azad Library.' },
-        { id: '2', title: 'Dining Hall Quality & Drinking Water Standards', category: 'Hostel', description: 'Institutionalizing democratic student mess committees in each hall, ensuring certified RO water coolers on every floor.' },
-        { id: '3', title: '48-Hour Student Grievance Redressal', category: 'Governance', description: 'Launching an open online ticket portal where maintenance requests, scholarship inquiries, and fee issues are monitored.' },
-        { id: '4', title: 'Placement & Internship Drives for All Faculties', category: 'Career', description: 'Connecting with national alumni networks to bring dedicated job fairs and skill workshops to Arts, Science, Commerce, and Social Sciences students.' },
-        { id: '5', title: 'Cultural & Sports Budget Revival', category: 'Campus Life', description: 'Revitalizing inter-hall sports tournaments, Sir Syed Day debate cups, and providing direct financial backing to active student cultural clubs.' },
-      ]);
+      setVisionGoals(candidate.visionGoals !== undefined ? candidate.visionGoals : []);
+      setExperienceRecords(candidate.experienceRecords !== undefined ? candidate.experienceRecords : []);
+      setAchievementsList(candidate.achievementsList !== undefined ? candidate.achievementsList : []);
+      setGalleryPhotos(candidate.galleryPhotos !== undefined ? candidate.galleryPhotos : []);
 
-      setExperienceRecords(candidate.experienceRecords && candidate.experienceRecords.length > 0 ? candidate.experienceRecords : [
-        { id: '1', year: '2024', title: 'Senior Student Council Representative', organization: `Faculty of ${candidate.faculty}`, description: 'Represented over 800 students in departmental academic reviews, successfully negotiating flexible seminar schedules.' },
-        { id: '2', year: '2023', title: 'Convenor, Inter-Hall Cultural Meet', organization: 'General Education Centre (GEC)', description: 'Coordinated student teams across Kennedy Auditorium and Strachey Hall, managing event budgeting and reception.' },
-        { id: '3', year: '2022', title: 'Dining & Health Committee Member', organization: candidate.hallOfResidence || 'Sir Syed Hall', description: 'Audited dining hall groceries, hygiene standards, and instituted a regular feedback log for student residents.' },
-      ]);
-
-      setAchievementsList(candidate.achievementsList && candidate.achievementsList.length > 0 ? candidate.achievementsList : [
-        { id: '1', year: '2024', title: 'Kennedy Memorial Debate Champion', category: 'Literary', description: 'First place among 32 contesting universities across India.' },
-        { id: '2', year: '2023', title: 'Dean\'s Academic Merit Roll', category: 'Academic', description: 'Maintained consistent distinction in coursework and departmental seminars.' },
-        { id: '3', year: '2023', title: 'Campus Blood Donation Organizer', category: 'Community', description: 'Helped mobilize over 350 student voluntary blood donors in a single drive.' },
-        { id: '4', year: '2022', title: 'Best Student Resident Award', category: 'Hostel', description: 'Awarded for exemplary discipline, peer mentorship, and hall community service.' },
-      ]);
-
-      setGalleryPhotos(candidate.galleryPhotos && candidate.galleryPhotos.length > 0 ? candidate.galleryPhotos : [
-        { id: '1', url: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80&w=600', title: 'Kennedy Auditorium Lawn Gathering', caption: 'Open Q&A on Student Charter with undergraduate students.' },
-        { id: '2', url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=600', title: 'Dining Reform Dialogue', caption: 'Listening to boarders regarding nutrition, mess fees, and clean drinking water.' },
-        { id: '3', url: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=600', title: 'Alumni & Placement Roundtable', caption: 'Discussing internships and competitive exam guidance with department seniors.' },
-      ]);
-
-      setContactEmail(candidate.contactEmail || `${candidate.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@myamu.ac.in`);
-      setPhone(candidate.phone || '+91 98765 43210');
-      setWhatsapp(candidate.whatsapp || '+91 98765 43210');
-      setOfficeAddress(candidate.officeAddress || `Room 14, ${candidate.hallOfResidence || 'Sir Syed Hall North'}`);
-      setVisitingHours(candidate.visitingHours || '4:30 PM - 7:30 PM Daily');
-      setInstagram(candidate.instagram || `@${candidate.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_amu2025`);
-      setTwitter(candidate.twitter || `@${candidate.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_amu`);
+      setContactEmail(candidate.contactEmail !== undefined ? candidate.contactEmail : '');
+      setPhone(candidate.phone !== undefined ? candidate.phone : '');
+      setWhatsapp(candidate.whatsapp !== undefined ? candidate.whatsapp : '');
+      setOfficeAddress(candidate.officeAddress !== undefined ? candidate.officeAddress : '');
+      setVisitingHours(candidate.visitingHours !== undefined ? candidate.visitingHours : '');
+      setInstagram(candidate.instagram !== undefined ? candidate.instagram : '');
+      setTwitter(candidate.twitter !== undefined ? candidate.twitter : '');
     }
   }, [candidate?.id]);
 
