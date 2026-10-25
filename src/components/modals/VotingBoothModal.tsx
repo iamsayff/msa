@@ -156,22 +156,35 @@ export const VotingBoothModal: React.FC<VotingBoothModalProps> = ({
                         currentChoice ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-200 hover:border-slate-300 bg-white'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
                         <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0"
+                          className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs"
                           style={{ backgroundColor: cat.themeColor.accentColor }}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
-                        <div>
-                          <h4 className="font-extrabold text-sm text-slate-900">{cat.label}</h4>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            {currentChoice ? `✓ Voted: ${currentChoice}` : 'No vote casted yet'}
-                          </p>
+                        <div className="min-w-0">
+                          <h4 className="font-extrabold text-sm text-slate-900 truncate">{cat.label}</h4>
+                          {currentChoice ? (
+                            <p className="text-[11px] font-bold text-emerald-700 mt-0.5 truncate flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                              <span className="truncate">Voted: {currentChoice}</span>
+                            </p>
+                          ) : (
+                            <p className="text-[11px] text-slate-400 mt-0.5">No vote cast yet</p>
+                          )}
                         </div>
                       </div>
 
-                      <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                      <div className="shrink-0 flex items-center gap-1">
+                        {currentChoice ? (
+                          <span className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-extrabold shadow-2xs transition-colors">
+                            Change Vote
+                          </span>
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        )}
+                      </div>
                     </button>
                   );
                 })}

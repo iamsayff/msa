@@ -25,6 +25,7 @@ interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
+  isSigningIn: boolean;
   authError: string | null;
   signInWithGoogle: () => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -41,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -118,6 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     setAuthError(null);
+    setIsSigningIn(true);
     try {
       // Force Google account selection prompt on every login attempt
       const provider = new GoogleAuthProvider();
@@ -154,16 +157,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // If user closed the popup, don't show an error
       if (error?.code === 'auth/popup-closed-by-user' || error?.code === 'auth/cancelled-popup-request') {
+        setIsSigningIn(false);
         return;
       }
 
       // If popup blocked or unauthorized domain
       if (error?.code === 'auth/popup-blocked') {
-        setAuthError('Google Sign-In popup was blocked by your browser. Please allow popups for this site and try again.');
+        setAuthError('Pop-up was blocked by your mobile browser. Please allow popups or tap Sign In with Google again.');
+        setIsSigningIn(false);
         return;
       }
 
-      setAuthError('Unable to complete Google Sign-In. Please click Sign In with Google again to choose your account.');
+      setAuthError('Google Sign-In prompt was interrupted. Please tap Sign In with Google again to choose your account.');
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
@@ -223,6 +230,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         profile,
         loading,
+        isSigningIn,
         authError,
         signInWithGoogle,
         signOutUser,

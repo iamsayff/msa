@@ -150,12 +150,24 @@ export default function App() {
     cabinet_member: ballot.cabinetMembers?.[0] || '',
   };
 
+  // Count voted posts out of 5 election posts
+  const votedPostsCount = [
+    Boolean(ballot.president),
+    Boolean(ballot.vicePresident),
+    Boolean(ballot.honorarySecretary),
+    Boolean(ballot.courtMember),
+    Boolean(ballot.cabinetMembers && ballot.cabinetMembers.length > 0),
+  ].filter(Boolean).length;
+
+  const hasVotedAll = votedPostsCount === 5;
+
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-clip bg-[#f8fafc] text-slate-900 flex flex-col font-sans relative">
-      {/* 1. Global Sticky Floating "VOTE NOW" Button across all pages */}
+      {/* 1. Global Sticky Floating "SUPPORT NOW" / "SUPPORTED VIEW" Button across all pages */}
       <StickyVoteButton
         onClick={() => setIsVotingOpen(true)}
-        hasVoted={hasVoted}
+        hasVotedAll={hasVotedAll}
+        votedCount={votedPostsCount}
       />
 
       {/* 2. Left Navigation Sidebar */}

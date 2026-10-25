@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-white opacity-100 border-b border-slate-100 w-full max-w-full shadow-xs">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 w-full shadow-xs transition-all">
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-18 sm:h-22 flex items-center justify-between gap-1.5 sm:gap-4 w-full">
         {/* Left: Site Logo & Mobile hamburger */}
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0">
@@ -68,16 +68,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Your Support Matters Badge / Button */}
-          <button
-            onClick={onOpenVoting}
-            className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full bg-emerald-50/90 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 text-xs font-bold tracking-wide transition-all shadow-2xs group cursor-pointer"
-          >
-            <Shield className="w-3.5 h-3.5 text-emerald-600 fill-emerald-500/20 group-hover:scale-110 transition-transform" />
-            <span>{hasVoted ? 'Support Registered' : 'Your Support Matters'}</span>
-            {hasVoted && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
-          </button>
-
           {/* User Profile Menu (when signed in) */}
           {(user || profile) ? (
             <div className="relative" ref={menuRef}>

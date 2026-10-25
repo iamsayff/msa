@@ -164,6 +164,10 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
     ['talktoaamirsaif@gmail.com', 'ansaarsaif7@gmail.com'].includes(currentUserEmail)
   );
 
+  const isVerifiedCandidate = Boolean(
+    candidate.isClaimed || candidate.claimedEmail || candidate.isVerified
+  );
+
   const category = POST_CATEGORIES.find((c) => c.id === candidate.post) || POST_CATEGORIES[0];
   const liveVotesCount = getCandidateVotes(candidate.id);
 
@@ -233,10 +237,12 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
                   </div>
                 )}
               </div>
-              <span className="-mt-3 z-10 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-900 text-white text-[11px] font-bold shadow-xs">
-                <VerifiedBadge size={14} title="Verified Candidate" />
-                <span>Verified Candidate</span>
-              </span>
+              {isVerifiedCandidate && (
+                <span className="-mt-3 z-10 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-900 text-white text-[11px] font-bold shadow-xs">
+                  <VerifiedBadge size={14} title="Verified Candidate" />
+                  <span>Verified Candidate</span>
+                </span>
+              )}
             </div>
 
             {/* Candidate Info */}
@@ -251,7 +257,9 @@ export const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
               {/* Candidate Name */}
               <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                 <span>{candidate.name}</span>
-                <VerifiedBadge size={22} title="Verified AMU Candidate Profile" />
+                {isVerifiedCandidate && (
+                  <VerifiedBadge size={22} title="Verified AMU Candidate Profile" />
+                )}
               </h1>
 
               {/* Slogan Quote */}
