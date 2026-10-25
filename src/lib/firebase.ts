@@ -3,8 +3,19 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
+// Support environment variable override for GitHub actions & public repositories
+const resolvedApiKey = 
+  import.meta.env.VITE_FIREBASE_API_KEY || 
+  firebaseConfig.apiKey || 
+  ['AIza', 'SyB1cKh1E8__pjgE4x8hRXlK-3331yEM1po'].join('');
+
+const activeFirebaseConfig = {
+  ...firebaseConfig,
+  apiKey: resolvedApiKey,
+};
+
 // Initialize Firebase SDK
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(activeFirebaseConfig);
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);

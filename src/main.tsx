@@ -3,12 +3,15 @@ import App from './App.tsx';
 import './index.css';
 import { AuthProvider } from './context/AuthContext';
 import { ElectionProvider } from './context/ElectionContext';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 createRoot(document.getElementById('root')!).render(
-  <AuthProvider>
-    <ElectionProvider>
-      <App />
-    </ElectionProvider>
-  </AuthProvider>
+  <ErrorBoundary>
+    <AuthProvider>
+      <ElectionProvider>
+        <App />
+      </ElectionProvider>
+    </AuthProvider>
+  </ErrorBoundary>
 );
 
