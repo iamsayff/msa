@@ -151,7 +151,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans relative">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f8fafc] text-slate-900 flex flex-col font-sans relative">
       {/* 1. Global Sticky Floating "VOTE NOW" Button across all pages */}
       <StickyVoteButton
         onClick={() => setIsVotingOpen(true)}

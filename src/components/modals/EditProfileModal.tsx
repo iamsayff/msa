@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Check, Building2, GraduationCap, Hash } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { AMU_FACULTIES, AMU_HALLS } from '../../constants/amuData';
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -16,37 +17,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
   const [hall, setHall] = useState('');
   const [studentId, setStudentId] = useState('');
   const [saved, setSaved] = useState(false);
-
-  const amuHalls = [
-    'Sir Syed Hall North',
-    'Sir Syed Hall South',
-    'Aftab Hall',
-    'Sulaiman Hall',
-    'Mohammad Habib Hall',
-    'Abdullah Hall',
-    'Sarojini Naidu Hall',
-    'Indira Gandhi Hall',
-    'Begum Sultan Jahan Hall',
-    'Nadeem Tarin Hall',
-    'Waqar-ul-Mulk Hall',
-    'Sir Ziauddin Hall',
-    'Allama Iqbal Hall',
-    'B.R. Ambedkar Hall',
-  ];
-
-  const amuFaculties = [
-    'Faculty of Engineering & Technology',
-    'Faculty of Arts',
-    'Faculty of Science',
-    'Faculty of Commerce',
-    'Faculty of Medicine',
-    'Faculty of Law',
-    'Faculty of Social Sciences',
-    'Faculty of Life Sciences',
-    'Faculty of Agricultural Sciences',
-    'Faculty of Theology',
-    'Faculty of International Studies',
-  ];
 
   useEffect(() => {
     if (profile) {
@@ -158,7 +128,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                   className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 >
                   <option value="">Select your faculty (optional)...</option>
-                  {amuFaculties.map((f) => (
+                  {AMU_FACULTIES.map((f) => (
                     <option key={f} value={f}>{f}</option>
                   ))}
                 </select>
@@ -174,7 +144,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                   className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 >
                   <option value="">Select your hall (optional)...</option>
-                  {amuHalls.map((h) => (
+                  {AMU_HALLS.map((h) => (
                     <option key={h} value={h}>{h}</option>
                   ))}
                 </select>

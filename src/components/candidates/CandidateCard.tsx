@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Candidate, PostCategoryConfig } from '../../types/election';
 import { useElection } from '../../context/ElectionContext';
 
@@ -53,6 +53,8 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
     .join('')
     .substring(0, 2)
     .toUpperCase();
+
+  const isVerifiedCandidate = Boolean(candidate.claimedEmail || candidate.isClaimed || candidate.isVerified);
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 p-5 sm:p-6 flex flex-col items-center text-center relative overflow-hidden group justify-between h-full w-full">
@@ -119,20 +121,30 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
           </div>
         </div>
 
-        {/* Candidate Name */}
-        <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug mt-1">
-          {candidate.name}
-        </h3>
+        {/* Candidate Name with Blue Verified Badge Icon if candidate profile is claimed */}
+        <div className="flex items-center justify-center gap-1.5 mt-1 px-1 flex-wrap">
+          <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug">
+            {candidate.name}
+          </h3>
+          {isVerifiedCandidate && (
+            <span title="Verified Candidate Profile" className="inline-flex items-center shrink-0">
+              <CheckCircle2 className="w-5 h-5 text-sky-500 fill-sky-500/20 shrink-0" />
+            </span>
+          )}
+        </div>
 
         {/* Bio / Tagline in Double Quotes */}
         <p className="text-xs sm:text-sm text-slate-600 font-medium italic mt-1 line-clamp-2 px-1 max-w-xs">
           &ldquo;{candidate.quote || candidate.bio || 'Working for Student Rights & Reform'}&rdquo;
         </p>
 
-        {/* Department / Faculty Name • Course */}
-        <p className="text-xs font-bold text-slate-800 mt-2 tracking-tight">
-          {candidate.faculty || 'Department / Faculty'} • {candidate.program || candidate.year || 'Course'}
-        </p>
+        {/* Department / Faculty Name • Course with Graduation Cap Icon */}
+        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800 mt-2 tracking-tight">
+          <GraduationCap className="w-4 h-4 text-slate-600 shrink-0" />
+          <span>
+            {candidate.faculty || 'Department / Faculty'} • {candidate.program || candidate.year || 'Course'}
+          </span>
+        </div>
 
         {isVoted && (
           <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold">
@@ -141,11 +153,11 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
         )}
       </div>
 
-      {/* 4. BOTTOM ACTION BUTTON: "View Profile -->" */}
+      {/* 4. BOTTOM ACTION BUTTON: "View Profile" with real Arrow Icon */}
       <div className="w-full pt-4 mt-2">
         <button
           onClick={() => onSelect(candidate)}
-          className="w-full py-2.5 px-6 rounded-2xl border-2 font-black text-xs sm:text-sm tracking-wide transition-all shadow-2xs hover:shadow-md cursor-pointer flex items-center justify-center gap-1.5 active:scale-98"
+          className="w-full py-2.5 px-6 rounded-2xl border-2 font-black text-xs sm:text-sm tracking-wide transition-all shadow-2xs hover:shadow-md cursor-pointer flex items-center justify-center gap-2 active:scale-98 group/btn"
           style={{
             borderColor: cardAccentColor,
             color: cardAccentColor,
@@ -160,7 +172,8 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
             e.currentTarget.style.color = cardAccentColor;
           }}
         >
-          <span>View Profile --&gt;</span>
+          <span>View Profile</span>
+          <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1 shrink-0" />
         </button>
       </div>
 

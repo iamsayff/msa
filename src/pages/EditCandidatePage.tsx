@@ -34,7 +34,7 @@ import {
   CandidateVisionItem 
 } from '../types/election';
 import { getCandidateSlug } from '../utils/candidateSlug';
-import { AMU_FACULTIES } from '../constants/faculties';
+import { AMU_FACULTIES, AMU_HALLS } from '../constants/amuData';
 import { useElection } from '../context/ElectionContext';
 import { useAuth } from '../context/AuthContext';
 import { POST_CATEGORIES } from '../data/mockElectionData';
@@ -723,13 +723,18 @@ export const EditCandidatePage: React.FC<EditCandidatePageProps> = ({
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Hall of Residence
                 </label>
-                <input
-                  type="text"
+                <select
                   value={hallOfResidence}
                   onChange={(e) => setHallOfResidence(e.target.value)}
-                  placeholder="e.g. Sir Syed Hall North"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs"
-                />
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white"
+                >
+                  <option value="">Select Hall of Residence...</option>
+                  {AMU_HALLS.map((h) => (
+                    <option key={h} value={h}>
+                      {h}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="sm:col-span-6">

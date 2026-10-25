@@ -124,6 +124,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     setAuthError(null);
     try {
+      googleProvider.setCustomParameters({
+        prompt: 'select_account',
+      });
       const res = await signInWithPopup(auth, googleProvider);
       if (res.user) {
         setUser(res.user);

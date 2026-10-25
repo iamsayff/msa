@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, PlusCircle, CheckCircle, Lock, LogIn } from 'lucide-react';
 import { CampusIssue } from '../../types/election';
 import { useAuth } from '../../context/AuthContext';
+import { AMU_HALLS, AMU_FACULTIES } from '../../constants/amuData';
 
 interface SubmitIssueModalProps {
   isOpen: boolean;
@@ -146,13 +147,23 @@ export const SubmitIssueModal: React.FC<SubmitIssueModalProps> = ({
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 Residential Hall / Faculty
               </label>
-              <input
-                type="text"
+              <select
                 value={facultyHall}
                 onChange={(e) => setFacultyHall(e.target.value)}
-                placeholder="e.g., Sir Syed Hall South, Law Faculty, etc."
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-              />
+              >
+                <option value="">Select Hall or Faculty...</option>
+                <optgroup label="Halls of Residence">
+                  {AMU_HALLS.map((h) => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Faculties">
+                  {AMU_FACULTIES.map((f) => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </optgroup>
+              </select>
             </div>
 
             <div>

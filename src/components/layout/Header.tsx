@@ -36,24 +36,24 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 flex items-center justify-between gap-3 sm:gap-4">
+      <header className="sticky top-0 z-30 bg-white opacity-100 border-b border-slate-100 w-full max-w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-18 sm:h-22 flex items-center justify-between gap-1.5 sm:gap-4 w-full">
           {/* Left: Stylish Site Logo & Mobile hamburger */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0">
             <button
               onClick={onOpenMobileMenu}
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+              className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:bg-slate-100 shrink-0"
               aria-label="Open navigation menu"
             >
               <Menu className="w-5 h-5" />
             </button>
 
             {/* Logo Badge for AMUSU Elections.in */}
-            <div className="flex items-center cursor-pointer hover:opacity-95 transition-opacity py-1">
+            <div className="flex items-center cursor-pointer hover:opacity-95 transition-opacity py-1 min-w-0">
               <img
                 src="https://i.ibb.co/rrNwtYY/Green-Mosque-Emblem-and-Election-Wordmark.png"
                 alt="AMUSU Elections.in - Know Your Candidate"
-                className="h-13 sm:h-16 md:h-18 w-auto max-w-[280px] sm:max-w-[340px] object-contain drop-shadow-xs transition-transform hover:scale-102"
+                className="h-10 sm:h-14 md:h-18 w-auto max-w-[170px] xs:max-w-[210px] sm:max-w-[320px] md:max-w-[360px] object-contain drop-shadow-xs transition-transform hover:scale-102"
               />
             </div>
           </div>

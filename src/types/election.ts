@@ -36,6 +36,8 @@ export interface Candidate {
   symbolName?: string;
   serialNumber?: number | string;
   claimedEmail?: string;
+  isClaimed?: boolean;
+  isVerified?: boolean;
   bio?: string;
   fullBio?: string[];
   manifestoHighlights: string[];
