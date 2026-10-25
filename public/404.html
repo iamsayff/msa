@@ -2,14 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>AMUSU Elections</title>
+    <title>AMUSU Elections - Redirecting...</title>
     <script type="text/javascript">
-      // Redirect all requests to index.html with path preserved in query string
-      var segment = window.location.pathname.split('/').pop();
-      window.location.replace('/?/' + segment + window.location.search + window.location.hash);
+      // Single Page Apps for GitHub Pages routing
+      // https://github.com/rafgraph/spa-github-pages
+      var pathSegmentsToKeep = 0;
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
     </script>
   </head>
-  <body style="font-family: system-ui, sans-serif; background: #f9fafb; display: flex; align-items: center; justify-content: center; height: 100vh;">
-    <p style="color: #059669; font-weight: bold;">Loading AMUSU Elections...</p>
+  <body style="font-family: system-ui, -apple-system, sans-serif; background-color: #f9fafb; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #475569;">
+    <div style="text-align: center;">
+      <h2 style="margin-bottom: 8px; color: #059669;">AMUSU Elections Portal</h2>
+      <p style="font-size: 14px;">Directing you to page...</p>
+    </div>
   </body>
 </html>
