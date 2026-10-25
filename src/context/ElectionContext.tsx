@@ -38,6 +38,8 @@ interface ElectionContextType {
   addCommentToIssue: (issueId: string, text: string) => Promise<boolean>;
   getCandidateVotes: (candidateId: string) => number;
   updateCandidate: (candidateId: string, updates: Partial<Candidate>) => Promise<boolean>;
+  addCandidate: (newCandidateData: { name: string; post: PostType; faculty: string }) => Promise<string>;
+  deleteCandidate: (candidateId: string) => Promise<boolean>;
   assignCandidateEmail: (candidateId: string, email: string) => Promise<boolean>;
   submitClaimRequest: (claimData: Omit<ProfileClaimRequest, 'id' | 'status' | 'createdAt'>) => Promise<boolean>;
   updateClaimStatus: (requestId: string, status: 'pending' | 'verified' | 'rejected') => Promise<void>;
@@ -473,7 +475,7 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return true;
   };
 
-  // 10. Update Candidate (e.g. Ballot Serial No, Avatar, Bio, Quote, Details)
+  // 10. Update Candidate
   const updateCandidate = async (candidateId: string, updates: Partial<Candidate>): Promise<boolean> => {
     setCandidates((curr) =>
       curr.map((c) => (c.id === candidateId ? { ...c, ...updates } : c))
@@ -483,6 +485,51 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return true;
     } catch (err) {
       console.warn('Candidate update warning:', err);
+      return false;
+    }
+  };
+
+  // Add New Candidate
+  const addCandidate = async (newCandidateData: { name: string; post: PostType; faculty: string }): Promise<string> => {
+    const id = `cand-${Date.now()}`;
+    const newCand: Candidate = {
+      id,
+      name: newCandidateData.name.trim(),
+      post: newCandidateData.post,
+      faculty: newCandidateData.faculty.trim() || 'Faculty of Arts',
+      quote: '',
+      year: 'Final Year',
+      program: '',
+      hallOfResidence: '',
+      enrollmentNo: '',
+      avatarUrl: '',
+      symbol: '🌟',
+      symbolName: 'Candidate Star',
+      bio: '',
+      manifestoHighlights: [],
+      manifestoDetails: [],
+      votesCount: 0,
+      serialNumber: candidates.length + 1,
+    };
+
+    setCandidates((curr) => [...curr, newCand]);
+    try {
+      await setDoc(doc(db, 'candidates', id), newCand);
+      return id;
+    } catch (err) {
+      console.warn('Error adding candidate to Firestore:', err);
+      return id;
+    }
+  };
+
+  // Delete Candidate
+  const deleteCandidate = async (candidateId: string): Promise<boolean> => {
+    setCandidates((curr) => curr.filter((c) => c.id !== candidateId));
+    try {
+      await deleteDoc(doc(db, 'candidates', candidateId));
+      return true;
+    } catch (err) {
+      console.warn('Error deleting candidate from Firestore:', err);
       return false;
     }
   };
@@ -555,6 +602,8 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         addCommentToIssue,
         getCandidateVotes,
         updateCandidate,
+        addCandidate,
+        deleteCandidate,
         assignCandidateEmail,
         submitClaimRequest,
         updateClaimStatus,

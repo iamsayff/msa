@@ -120,7 +120,9 @@ export const CandidatesSection: React.FC<CandidatesSectionProps> = ({
       {/* Category Rows */}
       <div className="space-y-10">
         {categoriesToDisplay.map((cat) => {
-          const candidatesInCat = filteredCandidates.filter((c) => c.post === cat.id);
+          const candidatesInCat = filteredCandidates
+            .filter((c) => c.post === cat.id)
+            .sort((a, b) => (b.votesCount || 0) - (a.votesCount || 0));
           const Icon = categoryIcons[cat.id];
 
           if (candidatesInCat.length === 0 && activeSearch) {

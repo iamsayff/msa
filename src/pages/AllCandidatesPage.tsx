@@ -69,8 +69,8 @@ export const AllCandidatesPage: React.FC<AllCandidatesPageProps> = ({
     }).sort((a, b) => {
       if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
       if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
-      if (sortBy === 'votes') return (b.votesCount || 0) - (a.votesCount || 0);
-      return 0; // default order preserved
+      // Default & votes sort both sort by highest votes descending first, grouped by post category
+      return (b.votesCount || 0) - (a.votesCount || 0);
     });
   }, [candidateList, selectedPost, selectedFaculty, searchQuery, sortBy]);
 
