@@ -533,7 +533,7 @@ export const CAMPUS_ISSUES: CampusIssue[] = [
     upvotesCount: 412,
     status: 'Open',
     postedAt: '2 days ago',
-    imageUrl: '/src/assets/images/hostel_facilities_1792911739754.jpg',
+    imageUrl: 'https://cdn-icons-png.flaticon.com/512/10607/10607354.png',
     comments: [
       { author: 'Farhan Z.', faculty: 'Engineering', text: 'Sir Syed Hall North urgently needs reading room AC maintenance before exams.', time: '1 day ago' },
       { author: 'Mariam K.', faculty: 'Arts', text: 'Solar water heaters in Abdullah Hall have been pending for two winters.', time: '14 hrs ago' },
@@ -548,7 +548,7 @@ export const CAMPUS_ISSUES: CampusIssue[] = [
     upvotesCount: 345,
     status: 'Under Review',
     postedAt: '3 days ago',
-    imageUrl: '/src/assets/images/library_exam_prep_1792911789065.jpg',
+    imageUrl: 'https://cdn-icons-png.flaticon.com/512/9043/9043010.png',
     comments: [
       { author: 'Bilal A.', faculty: 'Science', text: 'Having consecutive back-to-back papers without a single day gap is unfair on students.', time: '2 days ago' },
     ],
@@ -562,7 +562,7 @@ export const CAMPUS_ISSUES: CampusIssue[] = [
     upvotesCount: 290,
     status: 'Open',
     postedAt: '4 days ago',
-    imageUrl: '/src/assets/images/amu_campus_hero_1792911691683.jpg',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAZHgsnvfOpN7qs83_7o3VOBU6GVK16Lc8ZA4P6JHhzw&s=10',
     comments: [
       { author: 'Danish R.', faculty: 'Law', text: 'Wi-Fi disconnects frequently during online journal submissions.', time: '3 days ago' },
     ],
@@ -576,7 +576,7 @@ export const CAMPUS_ISSUES: CampusIssue[] = [
     upvotesCount: 265,
     status: 'Open',
     postedAt: '5 days ago',
-    imageUrl: '/src/assets/images/dining_mess_food_1792911807883.jpg',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr2Az8615MVVfdRdc_SvkAcOeBM6gJPaxGmUu-h3AvVA&s=10',
     comments: [
       { author: 'Hamza S.', faculty: 'Medicine', text: 'Periodic surprise hygiene checks by student doctors will fix this.', time: '4 days ago' },
     ],
@@ -590,7 +590,7 @@ export const CAMPUS_ISSUES: CampusIssue[] = [
     upvotesCount: 210,
     status: 'Open',
     postedAt: '6 days ago',
-    imageUrl: '/src/assets/images/transit_erickshaw_1792911760499.jpg',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1Z51UG8yJXW9q6hW3dN4umJJMPISw9WSbDD_WeWQefQ&s=10',
     comments: [
       { author: 'Sadia Q.', faculty: 'Commerce', text: 'Fixed fares of ₹10 from Bab-e-Syed to JNMC should be enforced officially.', time: '5 days ago' },
     ],
@@ -604,7 +604,7 @@ export const CAMPUS_ISSUES: CampusIssue[] = [
     upvotesCount: 185,
     status: 'Under Review',
     postedAt: '1 week ago',
-    imageUrl: '/src/assets/images/library_exam_prep_1792911789065.jpg',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3heCyUvXJ-PeqIfSR6VpIkJdtZuTV20bG5kxPZHC4ow&s=10',
     comments: [
       { author: 'Tanveer M.', faculty: 'Social Sciences', text: 'Mental health counseling center needs confidential booking and more counselors.', time: '6 days ago' },
     ],
