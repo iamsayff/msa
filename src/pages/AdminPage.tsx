@@ -195,9 +195,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   };
 
   const handleApproveClaim = async (claim: ProfileClaimRequest) => {
-    await assignCandidateEmail(claim.candidateId, claim.email);
+    if (claim.email) {
+      await assignCandidateEmail(claim.candidateId, claim.email);
+    }
     await updateClaimStatus(claim.id, 'verified');
-    setSavedNotice(`Claim approved! ${claim.email} assigned to ${claim.candidateName}`);
+    setSavedNotice(`Claim approved! ${claim.email || ''} assigned to ${claim.candidateName}`);
     setTimeout(() => setSavedNotice(null), 4000);
   };
 

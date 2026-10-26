@@ -27,7 +27,7 @@ export interface Candidate {
   quote: string;
 
   faculty: string;
-  year: string;
+  year?: string;
   program?: string;
   hallOfResidence?: string;
   enrollmentNo?: string;
@@ -40,7 +40,7 @@ export interface Candidate {
   isVerified?: boolean;
   bio?: string;
   fullBio?: string[];
-  manifestoHighlights: string[];
+  manifestoHighlights?: string[];
   manifestoDetails?: Array<{
     title: string;
     description: string;
@@ -106,10 +106,10 @@ export interface ProfileClaimRequest {
   id: string;
   candidateId: string;
   candidateName: string;
-  applicantName: string;
-  email: string;
-  phone: string;
-  studentId: string;
+  applicantName?: string;
+  email?: string;
+  phone?: string;
+  studentId?: string;
   admissionCardInfo?: string;
   message?: string;
   status: 'pending' | 'verified' | 'rejected';

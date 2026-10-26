@@ -117,7 +117,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
               <span>Manifesto Highlights & Reform Pledges</span>
             </h4>
             <ul className="space-y-2.5">
-              {candidate.manifestoHighlights.map((highlight, idx) => (
+              {(candidate.manifestoHighlights || []).map((highlight, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
                   <span 
                     className="w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0 mt-0.5 text-[10px] font-bold"
