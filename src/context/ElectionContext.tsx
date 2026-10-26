@@ -50,8 +50,22 @@ const ElectionContext = createContext<ElectionContextType | undefined>(undefined
 
 export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, profile, openAuthModal } = useAuth();
-  const [candidates, setCandidates] = useState<Candidate[]>(MOCK_CANDIDATES);
-  const [issues, setIssues] = useState<CampusIssue[]>(CAMPUS_ISSUES);
+  const [candidates, setCandidates] = useState<Candidate[]>(() => {
+    try {
+      const saved = localStorage.getItem('amu_pulse_candidates');
+      return saved ? JSON.parse(saved) : MOCK_CANDIDATES;
+    } catch {
+      return MOCK_CANDIDATES;
+    }
+  });
+  const [issues, setIssues] = useState<CampusIssue[]>(() => {
+    try {
+      const saved = localStorage.getItem('amu_pulse_issues');
+      return saved ? JSON.parse(saved) : CAMPUS_ISSUES;
+    } catch {
+      return CAMPUS_ISSUES;
+    }
+  });
   const [claimRequests, setClaimRequests] = useState<ProfileClaimRequest[]>([]);
   const [ballot, setBallot] = useState<UserBallot>(() => {
     try {
@@ -61,17 +75,22 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return { cabinetMembers: [] };
     }
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Default to false if we have mock/cached data
 
   // Cache timing (5 minutes)
   const CACHE_DURATION = 5 * 60 * 1000;
 
   const fetchData = async (force = false) => {
-    try {
-      const now = Date.now();
-      const lastFetched = Number(localStorage.getItem('amu_pulse_last_fetched') || 0);
+    const now = Date.now();
+    const lastFetched = Number(localStorage.getItem('amu_pulse_last_fetched') || 0);
 
-      // 1. Fetch Candidates
+    // Only set loading if we have absolutely nothing (shouldn't happen with mocks)
+    if (candidates.length <= 1 && issues.length <= 1) {
+      setLoading(true);
+    }
+
+    try {
+      // 1. Fetch Candidates (Background Sync if not forced)
       if (force || now - lastFetched > CACHE_DURATION || candidates.length <= 1) {
         const candidatesCol = collection(db, 'candidates');
         const snapshot = await getDocs(candidatesCol);
@@ -84,7 +103,6 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const cdata = docSnap.data() as Candidate;
             const nameLower = (cdata.name || '').toLowerCase().trim();
             if (REMOVED_NAMES.has(nameLower)) {
-              // Delete from database as requested
               deleteDoc(doc(db, 'candidates', docSnap.id)).catch(() => {});
             } else {
               liveCandidates.push({ ...cdata, id: docSnap.id });
@@ -94,12 +112,9 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setCandidates(liveCandidates);
           localStorage.setItem('amu_pulse_candidates', JSON.stringify(liveCandidates));
         }
-      } else {
-        const cached = localStorage.getItem('amu_pulse_candidates');
-        if (cached) setCandidates(JSON.parse(cached));
       }
 
-      // 2. Fetch Issues
+      // 2. Fetch Issues (Background Sync)
       if (force || now - lastFetched > CACHE_DURATION || issues.length <= 1) {
         const issuesCol = collection(db, 'campusIssues');
         const snapshot = await getDocs(issuesCol);
@@ -111,12 +126,9 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setIssues(liveIssues);
           localStorage.setItem('amu_pulse_issues', JSON.stringify(liveIssues));
         }
-      } else {
-        const cached = localStorage.getItem('amu_pulse_issues');
-        if (cached) setIssues(JSON.parse(cached));
       }
 
-      // 3. Fetch Claim Requests (Always fetch on load for admin-like views, or cache lightly)
+      // 3. Fetch Claim Requests
       const claimsCol = collection(db, 'claimRequests');
       const claimsSnapshot = await getDocs(claimsCol);
       const claims: ProfileClaimRequest[] = [];
@@ -136,9 +148,16 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     fetchData();
-    // One-time deletion of unwanted candidates if they exist in the UI state
+    // Background sync check: if cache is slightly old (but not expired), still trigger a quiet update
+    const lastFetched = Number(localStorage.getItem('amu_pulse_last_fetched') || 0);
+    const SILENT_REVALIDATE_THRESHOLD = 60 * 1000; // 1 minute
+    if (Date.now() - lastFetched > SILENT_REVALIDATE_THRESHOLD) {
+      // Quietly fetch in background without blocking or setting loading
+      fetchData(false);
+    }
+
     const unwanted = ['aamir saif', 'ansaar saif', 'mohd tariq', 'zaid khan'];
-    setCandidates(prev => prev.filter(c => !unwanted.includes(c.name.toLowerCase().trim())));
+    setCandidates(prev => prev.filter(c => !unwanted.includes((c.name || '').toLowerCase().trim())));
   }, []);
 
   // 3. Real-Time Listener for User's Confidential Ballot

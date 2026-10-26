@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://amusuelections.in/sitemap.xml
