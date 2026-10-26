@@ -181,20 +181,10 @@ export const Footer: React.FC<FooterProps> = ({
 
             {/* Social Icons row */}
             <div className="flex items-center gap-2.5">
-              {/* YouTube */}
-              <a
-                href="#"
-                className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
-                aria-label="YouTube"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-              </a>
-
+              
               {/* Instagram */}
               <a
-                href="#"
+                href="https://www.instagram.com/amusuelections.in"
                 className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
                 aria-label="Instagram"
               >
@@ -203,29 +193,9 @@ export const Footer: React.FC<FooterProps> = ({
                 </svg>
               </a>
 
-              {/* Twitter / X */}
-              <a
-                href="#"
-                className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
-                aria-label="Twitter X"
-              >
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-
-              {/* Telegram */}
-              <a
-                href="#"
-                className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
-                aria-label="Telegram"
-              >
-                <Send className="w-4 h-4 -translate-x-0.5" />
-              </a>
-
               {/* WhatsApp */}
               <a
-                href="#"
+                href="https://whatsapp.com/channel/0029VbDP92P8F2p9PrEios38"
                 className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
                 aria-label="WhatsApp"
               >
