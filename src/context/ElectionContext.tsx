@@ -63,137 +63,82 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
   const [loading, setLoading] = useState(true);
 
-  // 1. Seed & Listen to Candidates in Real-Time
-  useEffect(() => {
-    const candidatesCol = collection(db, 'candidates');
+  // Cache timing (5 minutes)
+  const CACHE_DURATION = 5 * 60 * 1000;
 
-    const REMOVED_IDS = new Set(['pres-1', 'vp-1', 'sec-1', 'court-1']);
-    const REMOVED_NAMES = new Set(['aamir saif', 'ansaar saif', 'mohd tariq', 'zaid khan']);
+  const fetchData = async (force = false) => {
+    try {
+      const now = Date.now();
+      const lastFetched = Number(localStorage.getItem('amu_pulse_last_fetched') || 0);
 
-    const unsubscribe = onSnapshot(candidatesCol, (snapshot) => {
-      if (snapshot.empty) {
-        try {
-          const batch = writeBatch(db);
-          MOCK_CANDIDATES.forEach((cand) => {
-            const candRef = doc(db, 'candidates', cand.id);
-            batch.set(candRef, cand, { merge: true });
+      // 1. Fetch Candidates
+      if (force || now - lastFetched > CACHE_DURATION || candidates.length <= 1) {
+        const candidatesCol = collection(db, 'candidates');
+        const snapshot = await getDocs(candidatesCol);
+        
+        if (!snapshot.empty) {
+          const REMOVED_NAMES = new Set(['aamir saif', 'ansaar saif', 'mohd tariq', 'zaid khan']);
+          const liveCandidates: Candidate[] = [];
+          
+          snapshot.forEach((docSnap) => {
+            const cdata = docSnap.data() as Candidate;
+            const nameLower = (cdata.name || '').toLowerCase().trim();
+            if (REMOVED_NAMES.has(nameLower)) {
+              // Delete from database as requested
+              deleteDoc(doc(db, 'candidates', docSnap.id)).catch(() => {});
+            } else {
+              liveCandidates.push({ ...cdata, id: docSnap.id });
+            }
           });
-          batch.commit().catch((e) => console.warn('Candidate seed notice:', e));
-        } catch (e) {
-          console.warn('Candidate batch notice:', e);
+          
+          setCandidates(liveCandidates);
+          localStorage.setItem('amu_pulse_candidates', JSON.stringify(liveCandidates));
         }
-        setCandidates(MOCK_CANDIDATES);
       } else {
-        const liveCandidates: Candidate[] = [];
-        const idsToDelete: string[] = [];
-
-        snapshot.forEach((docSnap) => {
-          const cdata = docSnap.data() as Candidate;
-          const nameLower = (cdata.name || '').toLowerCase().trim();
-
-          if (REMOVED_IDS.has(docSnap.id) || REMOVED_NAMES.has(nameLower)) {
-            idsToDelete.push(docSnap.id);
-          } else {
-            liveCandidates.push({ 
-              ...cdata, 
-              id: docSnap.id,
-              serialNumber: cdata.serialNumber !== undefined && cdata.serialNumber !== 0 ? cdata.serialNumber : undefined,
-            });
-          }
-        });
-
-        // Delete removed candidates from Firestore
-        if (idsToDelete.length > 0) {
-          try {
-            const batch = writeBatch(db);
-            idsToDelete.forEach((id) => {
-              batch.delete(doc(db, 'candidates', id));
-            });
-            batch.commit().catch((e) => console.warn('Candidate purge notice:', e));
-          } catch (e) {
-            console.warn('Candidate purge batch error:', e);
-          }
-        }
-
-        // Ensure newly added MOCK_CANDIDATES (e.g. Cabinet Members) are synced into Firestore
-        const existingIds = new Set(liveCandidates.map((c) => c.id));
-        const missingCandidates = MOCK_CANDIDATES.filter(
-          (mc) => !existingIds.has(mc.id) && !REMOVED_IDS.has(mc.id) && !REMOVED_NAMES.has((mc.name || '').toLowerCase().trim())
-        );
-
-        if (missingCandidates.length > 0) {
-          try {
-            const batch = writeBatch(db);
-            missingCandidates.forEach((mc) => {
-              const candRef = doc(db, 'candidates', mc.id);
-              batch.set(candRef, mc, { merge: true });
-            });
-            batch.commit().catch((e) => console.warn('Missing candidates seed notice:', e));
-          } catch (e) {
-            console.warn('Batch seed error:', e);
-          }
-        }
-
-        setCandidates([...liveCandidates, ...missingCandidates]);
+        const cached = localStorage.getItem('amu_pulse_candidates');
+        if (cached) setCandidates(JSON.parse(cached));
       }
-      setLoading(false);
-    }, (error) => {
-      console.warn('Realtime candidates sync notice:', error);
-      setCandidates(MOCK_CANDIDATES.filter((mc) => !REMOVED_IDS.has(mc.id) && !REMOVED_NAMES.has((mc.name || '').toLowerCase().trim())));
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
-  }, []);
+      // 2. Fetch Issues
+      if (force || now - lastFetched > CACHE_DURATION || issues.length <= 1) {
+        const issuesCol = collection(db, 'campusIssues');
+        const snapshot = await getDocs(issuesCol);
+        if (!snapshot.empty) {
+          const liveIssues: CampusIssue[] = [];
+          snapshot.forEach((docSnap) => {
+            liveIssues.push({ ...(docSnap.data() as CampusIssue), id: docSnap.id });
+          });
+          setIssues(liveIssues);
+          localStorage.setItem('amu_pulse_issues', JSON.stringify(liveIssues));
+        }
+      } else {
+        const cached = localStorage.getItem('amu_pulse_issues');
+        if (cached) setIssues(JSON.parse(cached));
+      }
 
-  // 2. Real-Time Listener for Candidate Profile Claim Requests
-  useEffect(() => {
-    const claimsCol = collection(db, 'claimRequests');
-
-    const unsubscribe = onSnapshot(claimsCol, (snapshot) => {
+      // 3. Fetch Claim Requests (Always fetch on load for admin-like views, or cache lightly)
+      const claimsCol = collection(db, 'claimRequests');
+      const claimsSnapshot = await getDocs(claimsCol);
       const claims: ProfileClaimRequest[] = [];
-      snapshot.forEach((docSnap) => {
+      claimsSnapshot.forEach((docSnap) => {
         claims.push({ ...(docSnap.data() as ProfileClaimRequest), id: docSnap.id });
       });
       claims.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setClaimRequests(claims);
-    }, (error) => {
-      console.warn('Claims sync notice:', error);
-    });
 
-    return () => unsubscribe();
-  }, []);
+      localStorage.setItem('amu_pulse_last_fetched', String(now));
+      setLoading(false);
+    } catch (error) {
+      console.warn('Error fetching election data:', error);
+      setLoading(false);
+    }
+  };
 
-  // 2. Real-Time Listener for Campus Issues
   useEffect(() => {
-    const issuesCol = collection(db, 'campusIssues');
-
-    const unsubscribe = onSnapshot(issuesCol, async (snapshot) => {
-      if (snapshot.empty) {
-        // Seed initial campus issues into Firestore
-        try {
-          const batch = writeBatch(db);
-          CAMPUS_ISSUES.forEach((iss) => {
-            const issRef = doc(db, 'campusIssues', iss.id);
-            batch.set(issRef, iss, { merge: true });
-          });
-          await batch.commit();
-        } catch (err) {
-          console.warn('Initial issues seeding notice:', err);
-        }
-      } else {
-        const liveIssues: CampusIssue[] = [];
-        snapshot.forEach((docSnap) => {
-          liveIssues.push({ ...(docSnap.data() as CampusIssue), id: docSnap.id });
-        });
-        setIssues(liveIssues);
-      }
-    }, (error) => {
-      console.warn('Issues sync notice:', error);
-      setIssues(CAMPUS_ISSUES);
-    });
-
-    return () => unsubscribe();
+    fetchData();
+    // One-time deletion of unwanted candidates if they exist in the UI state
+    const unwanted = ['aamir saif', 'ansaar saif', 'mohd tariq', 'zaid khan'];
+    setCandidates(prev => prev.filter(c => !unwanted.includes(c.name.toLowerCase().trim())));
   }, []);
 
   // 3. Real-Time Listener for User's Confidential Ballot

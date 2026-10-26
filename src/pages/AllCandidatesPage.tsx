@@ -377,7 +377,7 @@ export const AllCandidatesPage: React.FC<AllCandidatesPageProps> = ({
             </p>
 
             <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs font-semibold text-slate-700">
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/90 rounded-xl border border-emerald-200 shadow-2xs">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/90 rounded-xl border border-emerald-200 shadow-2xs animate-pulse">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Verified Badge Claim</span>
               </span>
