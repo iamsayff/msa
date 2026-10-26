@@ -242,11 +242,11 @@ export const Footer: React.FC<FooterProps> = ({
             {/* Quote Card */}
             <div className="bg-[#ecfdf5] border border-emerald-200/90 rounded-2xl p-4 shadow-2xs">
               <p className="font-semibold text-slate-800 text-xs sm:text-sm italic leading-snug">
-                &ldquo;A stronger AMU starts with student awareness.&rdquo;
+                &ldquo;We are Independent Student led Initiative to help Fellow AMU Students know about their candidates, and to help the candidates reach more students. A stronger AMU begins with Student AWARENESS.&rdquo;
               </p>
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-200/60">
                 <span className="text-[10px] font-bold text-emerald-800 tracking-wider">
-                  • AMUSU Elections 2025
+                  • Founder - AMUSUElections.in 
                 </span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>

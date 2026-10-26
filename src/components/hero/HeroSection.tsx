@@ -21,9 +21,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   // Live countdown timer state: 12d 6h 34m 20s
   const [timeLeft, setTimeLeft] = useState({
-    days: 12,
-    hours: 6,
-    minutes: 34,
+    days: 10,
+    hours: 3,
+    minutes: 23,
     seconds: 20,
   });
 
