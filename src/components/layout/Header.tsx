@@ -100,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <VerifiedBadge size={14} title="Verified AMU Voter" />
                     </div>
                     <p className="text-[11px] text-slate-500 font-medium">{profile?.email || user?.email}</p>
-                    <p className="text-[10px] text-emerald-600 font-bold mt-0.5">Verified AMU Student Voter</p>
+                    <p className="text-[10px] text-emerald-600 font-bold mt-0.5">AMU Student Voter</p>
                   </div>
 
                   <div className="py-1 space-y-0.5">

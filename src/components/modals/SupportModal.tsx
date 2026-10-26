@@ -34,7 +34,7 @@ export const SupportModal: React.FC<SupportModalProps> = ({ isOpen, onClose }) =
 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(
-      'Check out AMU Pulse — The official student-led democracy portal for AMUSU Elections 2025! Explore candidate profiles, manifestos, and cast your vote: ' + window.location.origin
+      'Check out AMUSUElections.in — The official student-led democracy portal for AMUSU Elections 2025! Explore candidate profiles, manifestos, and cast your vote: ' + window.location.origin
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -70,7 +70,7 @@ export const SupportModal: React.FC<SupportModalProps> = ({ isOpen, onClose }) =
             <Heart className="w-6 h-6 fill-rose-500" />
           </div>
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900">Support AMU Pulse</h3>
+            <h3 className="text-xl font-extrabold text-slate-900">Support AMUSUElections.in</h3>
             <p className="text-xs text-slate-500 mt-0.5">
               Empowering student democracy across Aligarh Muslim University
             </p>
@@ -80,7 +80,7 @@ export const SupportModal: React.FC<SupportModalProps> = ({ isOpen, onClose }) =
         {/* Info card */}
         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 leading-relaxed space-y-2">
           <p>
-            <strong>AMU Pulse</strong> is run independently by students to promote transparency, manifesto debates, and fair elections. We do not accept political advertisements or outside endorsements.
+            <strong>AMUSUElections.in</strong> is run independently by students to promote transparency, manifesto debates, and fair elections. We do not accept political advertisements or outside endorsements.
           </p>
           <p className="text-emerald-700 font-semibold flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 shrink-0" />

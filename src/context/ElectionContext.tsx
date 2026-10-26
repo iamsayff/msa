@@ -77,8 +77,8 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
   const [loading, setLoading] = useState(false); // Default to false if we have mock/cached data
 
-  // Cache timing (5 minutes)
-  const CACHE_DURATION = 5 * 60 * 1000;
+  // Cache timing (30 minutes to minimize reads)
+  const CACHE_DURATION = 30 * 60 * 1000;
 
   const fetchData = async (force = false) => {
     const now = Date.now();
@@ -128,15 +128,18 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
       }
 
-      // 3. Fetch Claim Requests
-      const claimsCol = collection(db, 'claimRequests');
-      const claimsSnapshot = await getDocs(claimsCol);
-      const claims: ProfileClaimRequest[] = [];
-      claimsSnapshot.forEach((docSnap) => {
-        claims.push({ ...(docSnap.data() as ProfileClaimRequest), id: docSnap.id });
-      });
-      claims.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setClaimRequests(claims);
+      // 3. Fetch Claim Requests (Only for Admins or cached)
+      if (force || now - lastFetched > CACHE_DURATION || claimRequests.length === 0) {
+        const claimsCol = collection(db, 'claimRequests');
+        const claimsSnapshot = await getDocs(claimsCol);
+        const claims: ProfileClaimRequest[] = [];
+        claimsSnapshot.forEach((docSnap) => {
+          claims.push({ ...(docSnap.data() as ProfileClaimRequest), id: docSnap.id });
+        });
+        claims.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setClaimRequests(claims);
+        localStorage.setItem('amu_pulse_claim_requests', JSON.stringify(claims));
+      }
 
       localStorage.setItem('amu_pulse_last_fetched', String(now));
       setLoading(false);
@@ -148,16 +151,12 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     fetchData();
-    // Background sync check: if cache is slightly old (but not expired), still trigger a quiet update
+    // Background sync check: only if cache is quite old
     const lastFetched = Number(localStorage.getItem('amu_pulse_last_fetched') || 0);
-    const SILENT_REVALIDATE_THRESHOLD = 60 * 1000; // 1 minute
+    const SILENT_REVALIDATE_THRESHOLD = 15 * 60 * 1000; // 15 minutes
     if (Date.now() - lastFetched > SILENT_REVALIDATE_THRESHOLD) {
-      // Quietly fetch in background without blocking or setting loading
       fetchData(false);
     }
-
-    const unwanted = ['aamir saif', 'ansaar saif', 'mohd tariq', 'zaid khan'];
-    setCandidates(prev => prev.filter(c => !unwanted.includes((c.name || '').toLowerCase().trim())));
   }, []);
 
   // 3. Real-Time Listener for User's Confidential Ballot

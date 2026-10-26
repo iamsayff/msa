@@ -67,7 +67,7 @@ export const ClaimProfileModal: React.FC<ClaimProfileModalProps> = ({
     }
   };
 
-  const mailtoUrl = `mailto:support@amupulse.in?subject=Profile%20Claim%20Request%20-%20${encodeURIComponent(
+  const mailtoUrl = `mailto:reach.lastminute@gmail.com?subject=Profile%20Claim%20Request%20-%20${encodeURIComponent(
     candidate.name
   )}&body=Dear%20AMU%20Pulse%20Admin,%0A%0AI%20am%20writing%20to%20claim%20my%20candidate%20profile%20page%20for%20${encodeURIComponent(
     candidate.name
@@ -140,7 +140,7 @@ export const ClaimProfileModal: React.FC<ClaimProfileModalProps> = ({
                   className="inline-flex items-center gap-1.5 font-bold text-emerald-700 hover:text-emerald-800"
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  <span>support@amupulse.in</span>
+                  <span>reach.lastminute@gmail.com</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -277,7 +277,7 @@ export const ClaimProfileModal: React.FC<ClaimProfileModalProps> = ({
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                   />
                   <span className="text-[10px] text-slate-400 mt-1 block">
-                    You can also email your scanned ID card to <strong>support@amupulse.in</strong> directly.
+                    You can also email your scanned ID card to <strong>reach.lastminute@gmail.com</strong> directly.
                   </span>
                 </div>
 

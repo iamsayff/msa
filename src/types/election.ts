@@ -1,5 +1,5 @@
 /**
- * AMU Pulse - Student Election Dashboard Data Types
+ * AMUSU Elections - Student Election Dashboard Data Types
  * Clean, structured types ready for future backend API & database integration.
  */
 

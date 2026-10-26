@@ -1,5 +1,5 @@
 /**
- * AMU Pulse Election Banners Configuration
+ * AMUSU Election Banners Configuration
  * Centralized configuration for all banner image URLs in the application.
  */
 export const BANNERS = {

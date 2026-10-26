@@ -220,7 +220,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 className="hover:text-white inline-flex items-center gap-1 font-bold text-slate-300 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Return to AMU Pulse Public Site</span>
+                <span>Return to AMUSU Elections Public Site</span>
               </button>
               <span>/</span>
               <span className="text-emerald-400 font-bold">Admin Control Center</span>

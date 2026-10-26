@@ -1,6 +1,6 @@
 {
-  "name": "AMUSU Elections 2025 - Candidate Directory",
-  "description": "Official student-led platform for AMUSU Elections 2025. Explore verified candidate profiles, manifestos, campus issues, and live election timeline.",
+  "name": "AMUSU Elections 2025 - Know your Candidates",
+  "description": "Student-led platform for Aligarh Muslim University (AMU) Student Union Elections 2025. Explore verified candidate profiles, manifestos, campus issues, and live election results.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
